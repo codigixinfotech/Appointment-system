@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCheckCircle, FaTimesCircle, FaArrowLeft } from 'react-icons/fa';
+import { FaCheckCircle, FaArrowLeft } from 'react-icons/fa';
 import { useTheme } from '../theme/ThemeProvider';
 import { db } from '../services/db';
 import type { Doctor } from '../services/db';

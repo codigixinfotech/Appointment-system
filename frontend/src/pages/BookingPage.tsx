@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../theme/ThemeProvider';
 import { motion } from 'framer-motion';
-import { FaUserMd, FaMapMarkerAlt, FaVideo, FaCalendarCheck, FaClock, FaGraduationCap, FaLanguage, FaStar, FaHeart, FaCommentDots, FaUser, FaCheckCircle, FaSearch, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
+import { FaUserMd, FaMapMarkerAlt, FaVideo, FaClock, FaStar, FaHeart, FaCommentDots, FaUser, FaCheckCircle, FaSearch, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 import { Modal } from '../components/Modal';
 import { db } from '../services/db';
 import { fetchGoogleReviews, type GooglePlaceResult } from '../services/googlePlaces';

@@ -8,7 +8,7 @@ import { FaUserAlt, FaBirthdayCake, FaVenusMars, FaNotesMedical } from 'react-ic
 const schema = z.object({
   name: z.string().min(2, 'Name is required'),
   age: z.string().min(1, 'Age is required'),
-  gender: z.enum(['Male', 'Female', 'Other'], { required_error: 'Please select a gender' }),
+  gender: z.enum(['Male', 'Female', 'Other'], { message: 'Please select a gender' }),
   description: z.string().max(250, 'Description too long').optional(),
 });
 
