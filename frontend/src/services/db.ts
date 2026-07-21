@@ -277,13 +277,19 @@ class ApiDB {
 
   // --- Auth & OTP ---
 
-  async sendOtp(mobile: string): Promise<boolean> {
+  async sendOtp(mobile: string): Promise<{ success: boolean; debugOtp?: string }> {
     const response = await fetch(`${API_BASE}/auth/send-otp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mobile }),
     });
-    return response.ok;
+    
+    if (!response.ok) {
+        throw new Error('Failed to send OTP');
+    }
+    
+    const data = await response.json();
+    return { success: true, debugOtp: data.debug_otp };
   }
 
   async verifyOtp(mobile: string, otpCode: string): Promise<boolean> {

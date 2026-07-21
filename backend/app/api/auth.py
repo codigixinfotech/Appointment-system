@@ -54,6 +54,7 @@ def send_otp(request: SendOTPRequest, db: Session = Depends(get_db)):
                 to=phone_number
             )
             print(f"Twilio SMS sent successfully! SID: {message.sid}")
+            print(f"[DEBUG] OTP for {phone_number} is: {code}")
         except Exception as e:
             print(f"Twilio SMS Failed: {e}")
             traceback.print_exc()
@@ -65,7 +66,7 @@ def send_otp(request: SendOTPRequest, db: Session = Depends(get_db)):
         print(f"Your Appointment System OTP is: {code}")
         print(f"==========================================\n")
     
-    return {"message": "OTP sent successfully"}
+    return {"message": "OTP sent successfully", "debug_otp": code}
 
 @router.post("/verify-otp")
 def verify_otp(request: VerifyOTPRequest, db: Session = Depends(get_db)):

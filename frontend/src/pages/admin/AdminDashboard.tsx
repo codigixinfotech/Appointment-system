@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../services/db';
 import type { Tenant } from '../../services/db';
-import { FaPlus, FaHospital, FaExternalLinkAlt, FaUserMd, FaEdit } from 'react-icons/fa';
+import { FaPlus, FaHospital, FaExternalLinkAlt, FaUserMd, FaEdit, FaCopy, FaTimes } from 'react-icons/fa';
 
 export const AdminDashboard = () => {
   const navigate = useNavigate();
   const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [selectedTenantUrl, setSelectedTenantUrl] = useState<{tenant: Tenant, url: string} | null>(null);
 
   useEffect(() => {
     loadTenants();
@@ -72,14 +73,15 @@ export const AdminDashboard = () => {
                 >
                   <FaUserMd /> Manage Doctors
                 </button>
-                <a
-                  href={`/${tenant.slug}`}
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  onClick={() => {
+                    const url = `${window.location.origin}/${tenant.slug}`;
+                    setSelectedTenantUrl({ tenant, url });
+                  }}
                   className="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors border border-indigo-100"
                 >
-                  <FaExternalLinkAlt className="text-xs" /> Visit Booking Portal
-                </a>
+                  <FaExternalLinkAlt className="text-xs" /> Share Booking Portal
+                </button>
               </div>
             </div>
           ))}
@@ -99,6 +101,50 @@ export const AdminDashboard = () => {
           )}
         </div>
       </div>
+
+      {/* Share URL Modal */}
+      {selectedTenantUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-gray-900">Share Booking Portal</h3>
+              <button onClick={() => setSelectedTenantUrl(null)} className="text-gray-500 hover:text-gray-700 transition-colors">
+                <FaTimes />
+              </button>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              Share this link with patients so they can book appointments at <strong>{selectedTenantUrl.tenant.name}</strong>.
+            </p>
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-6 flex items-center gap-3">
+              <input 
+                type="text" 
+                readOnly 
+                value={selectedTenantUrl.url} 
+                className="bg-transparent flex-1 outline-none text-sm text-gray-700"
+              />
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(selectedTenantUrl.url);
+                  alert("Copied to clipboard!");
+                }}
+                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors"
+              >
+                <FaCopy /> Copy
+              </button>
+              <a
+                href={selectedTenantUrl.url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors"
+              >
+                <FaExternalLinkAlt /> Open Link
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
