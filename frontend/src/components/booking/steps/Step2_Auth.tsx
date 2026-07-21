@@ -18,6 +18,7 @@ export const Step2_Auth: React.FC<Props> = ({ data, updateData, next, prev }) =>
   const [timer, setTimer] = useState(30);
   const [error, setError] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
+  const [debugOtp, setDebugOtp] = useState('');
   
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -38,7 +39,12 @@ export const Step2_Auth: React.FC<Props> = ({ data, updateData, next, prev }) =>
     
     try {
       setIsVerifying(true); // Re-use spinner for sending
-      await db.sendOtp(mobile);
+      const res = await db.sendOtp(mobile);
+      if (res.debugOtp) {
+        setDebugOtp(res.debugOtp);
+      } else {
+        setDebugOtp('');
+      }
       updateData({ mobile });
       setOtpSent(true);
       setTimer(300); // 5 minutes matching backend
@@ -162,10 +168,16 @@ export const Step2_Auth: React.FC<Props> = ({ data, updateData, next, prev }) =>
                   <FaShieldAlt className="text-3xl" />
                 </div>
                 <h4 className="text-2xl font-bold text-gray-800 mb-2">Verify it's you</h4>
-                <p className="text-gray-500 mb-8 text-sm leading-relaxed">
+                <p className="text-gray-500 mb-6 text-sm leading-relaxed">
                   We've sent a code to <span className="font-bold text-gray-800">+91 {mobile}</span>. 
                   <button onClick={() => setOtpSent(false)} className="text-[var(--color-primary)] font-semibold ml-2 hover:underline">Edit</button>
                 </p>
+                
+                {debugOtp && (
+                  <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 rounded-lg mb-6 text-sm text-center font-medium shadow-sm">
+                    Developer Mode: Your OTP is <span className="font-bold text-lg">{debugOtp}</span>
+                  </div>
+                )}
                 
                 <div className="flex gap-4 justify-between mb-2">
                   {otp.map((digit, i) => (
