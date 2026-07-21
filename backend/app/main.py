@@ -9,14 +9,18 @@ from app.models import tenant, doctor, otp
 # Import routers
 from app.api import tenants, doctors, auth
 
+from app.core.config import settings
+
 # Auto-migrate database on startup
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Appointment Booking System", version="1.0.0")
 
+cors_origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # For dev only, update in prod
+    allow_origins=cors_origins if cors_origins else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

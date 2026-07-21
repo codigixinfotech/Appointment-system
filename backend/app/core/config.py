@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "supersecretkey_change_in_production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    CORS_ORIGINS: str = "*"
     
     # MySQL Database Config
     MYSQL_USER: str = "root"
