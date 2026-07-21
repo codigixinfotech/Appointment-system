@@ -51,7 +51,7 @@ export interface Doctor {
   unavailableDates?: string[];
 }
 
-const DEFAULT_THEME: TenantTheme = {
+export const DEFAULT_THEME: TenantTheme = {
   primaryColor: '#883b4b',
   secondaryColor: '#db2777',
   accentColor: '#f59e0b',
