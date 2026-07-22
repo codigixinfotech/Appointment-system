@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { db } from '../../services/db';
 import type { TenantTheme } from '../../services/db';
-import { FaArrowLeft, FaSave, FaPalette } from 'react-icons/fa';
+import { FaArrowLeft, FaSave, FaPalette, FaClock, FaPlus, FaTrash } from 'react-icons/fa';
 
 export const HospitalForm = () => {
   const navigate = useNavigate();
@@ -209,16 +209,94 @@ export const HospitalForm = () => {
               </div>
 
               <div className="flex flex-col gap-2 col-span-1 md:col-span-2">
-                <label className="text-xs  text-gray-700">Google Maps Embed URL (iframe src)</label>
+                <label className="text-xs text-gray-700">Google Maps Embed Code or URL</label>
                 <input
                   required
-                  type="url"
-                  placeholder="https://www.google.com/maps/embed?pb=..."
+                  type="text"
+                  placeholder='<iframe src="https://www.google.com/maps/embed?pb=..." ></iframe>'
                   value={(formData as any).mapEmbedUrl || ''}
-                  onChange={e => setFormData({ ...formData, mapEmbedUrl: e.target.value } as any)}
+                  onChange={e => {
+                    let val = e.target.value;
+                    const srcMatch = val.match(/src=["']([^"']+)["']/);
+                    if (srcMatch) {
+                      val = srcMatch[1];
+                    }
+                    setFormData({ ...formData, mapEmbedUrl: val } as any);
+                  }}
                   className="w-full p-2 border border-gray-200 rounded text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
                 />
               </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded p-4 border border-gray-100">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl text-gray-900 flex items-center gap-2">
+                <FaClock className="text-indigo-500" /> Working Hours
+              </h2>
+              <button
+                type="button"
+                onClick={() => setWorkingHours([...workingHours, { label: '', time: '', isEmergency: false }])}
+                className="text-indigo-600 hover:text-indigo-700 text-sm font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <FaPlus /> Add Row
+              </button>
+            </div>
+            
+            <div className="flex flex-col gap-3">
+              {workingHours.map((wh, index) => (
+                <div key={index} className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <input
+                    type="text"
+                    placeholder="e.g. Mon - Fri"
+                    value={wh.label}
+                    onChange={(e) => {
+                      const newWh = [...workingHours];
+                      newWh[index].label = e.target.value;
+                      setWorkingHours(newWh);
+                    }}
+                    className="w-1/3 p-2 border border-gray-200 rounded text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
+                  />
+                  <input
+                    type="text"
+                    placeholder="e.g. 9:00 AM - 5:00 PM"
+                    value={wh.time}
+                    onChange={(e) => {
+                      const newWh = [...workingHours];
+                      newWh[index].time = e.target.value;
+                      setWorkingHours(newWh);
+                    }}
+                    className="w-1/3 p-2 border border-gray-200 rounded text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
+                  />
+                  <label className="flex flex-1 items-center gap-2 text-xs text-gray-600 cursor-pointer whitespace-nowrap">
+                    <input
+                      type="checkbox"
+                      checked={wh.isEmergency || false}
+                      onChange={(e) => {
+                        const newWh = [...workingHours];
+                        newWh[index].isEmergency = e.target.checked;
+                        setWorkingHours(newWh);
+                      }}
+                      className="cursor-pointer"
+                    />
+                    Emergency
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newWh = [...workingHours];
+                      newWh.splice(index, 1);
+                      setWorkingHours(newWh);
+                    }}
+                    className="text-red-400 hover:text-red-600 p-2 cursor-pointer transition-colors"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              ))}
+              {workingHours.length === 0 && (
+                <p className="text-sm text-gray-500 text-center py-4">No working hours defined.</p>
+              )}
             </div>
           </div>
 

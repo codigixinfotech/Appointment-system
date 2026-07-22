@@ -79,7 +79,7 @@ export const BookingPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 key={doctor.id}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row relative overflow-hidden hover:shadow-md transition-shadow items-stretch"
+                className="bg-white rounded  shadow-sm border border-gray-100 flex flex-col sm:flex-row relative overflow-hidden hover:shadow-md transition-shadow items-stretch"
               >
 
                 {/* Left Side: Photo and Rating */}
@@ -150,11 +150,11 @@ export const BookingPage = () => {
 
         {/* Right Side: Hospital Info & Map */}
         <div className="lg:col-span-4">
-          <div className="sticky top-28 bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm flex flex-col relative group">
+          <div className="sticky top-28 bg-white border border-gray-100 rounded overflow-hidden shadow-sm flex flex-col relative group">
             {/* Decorative background element */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-primary)] opacity-[0.03] rounded-bl-full -z-0"></div>
 
-            <div className="p-8 relative z-10">
+            <div className="p-3 relative z-10">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] flex items-center justify-center shrink-0">
                   <FaMapMarkerAlt className="text-xl" />
@@ -208,7 +208,7 @@ export const BookingPage = () => {
             {/* Map Placeholder */}
             {tenant?.mapEmbedUrl && (
               <div className="w-full h-[250px] relative mt-2 border-t border-gray-100 p-2 bg-gray-50">
-                <div className="w-full h-full rounded-2xl overflow-hidden shadow-sm border border-gray-200">
+                <div className="w-full h-full rounded overflow-hidden shadow-sm border border-gray-200">
                   <iframe
                     src={tenant.mapEmbedUrl}
                     width="100%"
