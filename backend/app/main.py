@@ -16,11 +16,21 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Appointment Booking System", version="1.0.0")
 
-cors_origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()]
+# Setup CORS origins dynamically from environment variables
+cors_origins = []
+if settings.CLIENT_ORIGIN:
+    cors_origins.extend([origin.strip() for origin in settings.CLIENT_ORIGIN.split(",") if origin.strip()])
+if settings.CORS_ORIGINS and settings.CORS_ORIGINS != "*":
+    cors_origins.extend([origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()])
+
+if settings.CORS_ORIGINS == "*" or not cors_origins:
+    cors_origins = ["*"]
+else:
+    cors_origins = list(set(cors_origins))
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=cors_origins if cors_origins else ["*"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
