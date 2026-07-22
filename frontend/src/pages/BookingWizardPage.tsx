@@ -8,10 +8,8 @@ import type { Doctor } from '../services/db';
 
 // Step Imports
 import { Step1_SelectSlot } from '../components/booking/steps/Step1_SelectSlot';
-import { Step2_Auth } from '../components/booking/steps/Step2_Auth';
-import { Step4_PatientDetails as Step3_PatientDetails } from '../components/booking/steps/Step4_PatientDetails';
-import { Step5_Summary as Step4_Summary } from '../components/booking/steps/Step5_Summary';
-import { Step6_PaymentMock as Step5_PaymentMock } from '../components/booking/steps/Step6_PaymentMock';
+import { Step2_PatientAuth } from '../components/booking/steps/Step2_PatientAuth';
+import { Step3_ReviewPay } from '../components/booking/steps/Step3_ReviewPay';
 
 export interface BookingData {
   doctor: Doctor | null;
@@ -68,7 +66,7 @@ export const BookingWizardPage: React.FC = () => {
 
   if (loading || !doctor || !theme) return <div className="min-h-screen bg-gray-50"></div>;
 
-  const nextStep = () => setStep((s) => Math.min(s + 1, 5));
+  const nextStep = () => setStep((s) => Math.min(s + 1, 3));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
   const updateData = (newData: Partial<BookingData>) => {
@@ -84,13 +82,9 @@ export const BookingWizardPage: React.FC = () => {
       case 1:
         return <Step1_SelectSlot data={bookingData} updateData={updateData} next={nextStep} />;
       case 2:
-        return <Step2_Auth data={bookingData} updateData={updateData} next={nextStep} prev={prevStep} />;
+        return <Step2_PatientAuth data={bookingData} updateData={updateData} next={nextStep} prev={prevStep} />;
       case 3:
-        return <Step3_PatientDetails updateData={updateData} next={nextStep} prev={prevStep} />;
-      case 4:
-        return <Step4_Summary data={bookingData} next={nextStep} prev={prevStep} />;
-      case 5:
-        return <Step5_PaymentMock onSuccess={() => setIsSuccess(true)} prev={prevStep} />;
+        return <Step3_ReviewPay data={bookingData} onSuccess={() => setIsSuccess(true)} prev={prevStep} />;
       default:
         return null;
     }
@@ -98,10 +92,8 @@ export const BookingWizardPage: React.FC = () => {
 
   const WIZARD_STEPS = [
     { id: 1, title: 'Select Slot', subtitle: bookingData.timeSlot ? 'Completed' : 'Choose date & time' },
-    { id: 2, title: 'Mobile Auth', subtitle: step > 2 ? 'Completed' : 'Enter mobile & OTP' },
-    { id: 3, title: 'Patient Details', subtitle: step > 3 ? 'Completed' : 'Basic info' },
-    { id: 4, title: 'Summary', subtitle: step > 4 ? 'Completed' : 'Review booking' },
-    { id: 5, title: 'Payment', subtitle: step > 5 ? 'Completed' : 'Complete payment' }
+    { id: 2, title: 'Patient Info & Auth', subtitle: step > 2 ? 'Completed' : 'Enter details & verify' },
+    { id: 3, title: 'Review & Pay', subtitle: step > 3 ? 'Completed' : 'Confirm & pay' }
   ];
 
   return (
