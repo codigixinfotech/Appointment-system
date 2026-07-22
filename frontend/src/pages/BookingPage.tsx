@@ -20,6 +20,7 @@ export const BookingPage = () => {
   const [loadingAppts, setLoadingAppts] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [googlePlaceData, setGooglePlaceData] = useState<GooglePlaceResult | null>(null);
+  const [selectedDoctorPatientCount, setSelectedDoctorPatientCount] = useState<number | string>("...");
 
   useEffect(() => {
     if (tenant) {
@@ -48,6 +49,20 @@ export const BookingPage = () => {
       setDoctorAppointments([]);
     }
   }, [tenant, calendarDoctor]);
+
+  useEffect(() => {
+    if (tenant && selectedDoctor) {
+      setSelectedDoctorPatientCount("...");
+      db.getAppointments(tenant.id, selectedDoctor.id)
+        .then(appts => {
+          setSelectedDoctorPatientCount(appts.length);
+        })
+        .catch(err => {
+          console.error("Failed to fetch patients count", err);
+          setSelectedDoctorPatientCount("N/A");
+        });
+    }
+  }, [tenant, selectedDoctor]);
 
   const filteredDoctors = doctors.filter(doc =>
     doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -298,15 +313,17 @@ export const BookingPage = () => {
       <Modal
         isOpen={!!selectedDoctor}
         onClose={() => setSelectedDoctor(null)}
+        maxWidth="max-w-4xl"
+        noPadding={true}
       >
         {selectedDoctor && (
           <div className="flex flex-col md:flex-row gap-0 bg-white overflow-hidden rounded-2xl max-w-4xl mx-auto border border-gray-100">
             {/* Left panel (Image + bio card) */}
-            <div className="w-full md:w-[420px] flex flex-col relative shrink-0 border-r border-gray-100 pb-6">
-              <div className="bg-[#eaf4fe] h-44 w-full relative">
-                <img src={selectedDoctor.photo} className="absolute bottom-0 left-1/2 -translate-x-1/2 w-52 h-52 object-cover object-top drop-shadow-md" style={{ clipPath: 'inset(0 0 0 0 round 9999px 9999px 0 0)' }} alt={selectedDoctor.name} />
+            <div className="w-full md:w-[420px] flex flex-col relative shrink-0 border-r border-gray-100 pb-4">
+              <div className="bg-[#eaf4fe] h-28 w-full relative">
+                <img src={selectedDoctor.photo} className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-32 object-cover object-top drop-shadow-md" style={{ clipPath: 'inset(0 0 0 0 round 9999px 9999px 0 0)' }} alt={selectedDoctor.name} />
               </div>
-              <div className="bg-white rounded-t-[30px] -mt-6 relative z-10 px-8 pt-6 pb-2 flex flex-col shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
+              <div className="bg-white rounded-t-[30px] -mt-4 relative z-10 px-6 pt-4 pb-2 flex flex-col shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
                 <div className="flex justify-between items-start">
                   <div>
                     <h2 className="text-2xl  text-gray-800 tracking-tight">{selectedDoctor.name}</h2>
@@ -315,29 +332,29 @@ export const BookingPage = () => {
                       <FaMapMarkerAlt /> {selectedDoctor.address.split(',')[0]}
                     </div>
                   </div>
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-white shrink-0 shadow-md cursor-pointer mt-1 hover:shadow-lg transition-shadow bg-[var(--color-primary)]">
-                    <FaCommentDots className="text-xl" />
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm cursor-pointer mt-1 hover:shadow-md transition-shadow bg-[var(--color-primary)]">
+                    <FaCommentDots className="text-lg" />
                   </div>
                 </div>
 
-                <div className="flex justify-between gap-3 mt-8">
-                  <div className="flex-1 bg-white border border-gray-100 rounded-2xl py-4 px-2 flex flex-col items-center justify-center shadow-sm">
-                    <span className="text-[10px] text-gray-400  uppercase tracking-wider mb-1.5">Patients</span>
-                    <div className="flex items-center gap-1.5 text-base  text-gray-800"><FaUser className="text-[var(--color-primary)]" /> 380+</div>
+                <div className="flex justify-between gap-2 mt-4">
+                  <div className="flex-1 bg-white border border-gray-100 rounded-xl py-2 px-2 flex flex-col items-center justify-center shadow-sm">
+                    <span className="text-[9px] text-gray-400  uppercase tracking-wider mb-1">Patients</span>
+                    <div className="flex items-center gap-1 text-sm font-medium text-gray-800"><FaUser className="text-[var(--color-primary)] text-xs" /> {selectedDoctorPatientCount}</div>
                   </div>
-                  <div className="flex-1 bg-white border border-gray-100 rounded-2xl py-4 px-2 flex flex-col items-center justify-center shadow-sm">
-                    <span className="text-[10px] text-gray-400  uppercase tracking-wider mb-1.5">Experience</span>
-                    <div className="flex items-center gap-1.5 text-base  text-gray-800"><FaCheckCircle className="text-[var(--color-primary)]" /> {selectedDoctor.experience.split(' ')[0]} Yrs+</div>
+                  <div className="flex-1 bg-white border border-gray-100 rounded-xl py-2 px-2 flex flex-col items-center justify-center shadow-sm">
+                    <span className="text-[9px] text-gray-400  uppercase tracking-wider mb-1">Experience</span>
+                    <div className="flex items-center gap-1 text-sm font-medium text-gray-800"><FaCheckCircle className="text-[var(--color-primary)] text-xs" /> {selectedDoctor.experience.split(' ')[0]} Yrs+</div>
                   </div>
-                  <div className="flex-1 bg-white border border-gray-100 rounded-2xl py-4 px-2 flex flex-col items-center justify-center shadow-sm">
-                    <span className="text-[10px] text-gray-400  uppercase tracking-wider mb-1.5">Rating</span>
-                    <div className="flex items-center gap-1.5 text-base  text-gray-800"><FaStar className="text-[var(--color-primary)]" /> {selectedDoctor.rating.toFixed(1)}</div>
+                  <div className="flex-1 bg-white border border-gray-100 rounded-xl py-2 px-2 flex flex-col items-center justify-center shadow-sm">
+                    <span className="text-[9px] text-gray-400  uppercase tracking-wider mb-1">Rating</span>
+                    <div className="flex items-center gap-1 text-sm font-medium text-gray-800"><FaStar className="text-[var(--color-primary)] text-xs" /> {googlePlaceData?.rating ? googlePlaceData.rating.toFixed(1) : selectedDoctor.rating.toFixed(1)}</div>
                   </div>
                 </div>
 
                 {(selectedDoctor.email || selectedDoctor.phone) && (
-                  <div className="mt-8">
-                    <h3 className=" text-gray-800 mb-3 text-lg">Contact</h3>
+                  <div className="mt-4">
+                    <h3 className=" text-gray-800 mb-1 text-sm font-semibold">Contact</h3>
                     <div className="flex flex-col gap-2">
                       {selectedDoctor.email && (
                         <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -353,19 +370,19 @@ export const BookingPage = () => {
                   </div>
                 )}
 
-                <div className="mt-8">
-                  <h3 className=" text-gray-800 mb-3 text-lg">Consultation</h3>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <span className={`px-2.5 py-1 rounded-full font-semibold text-xs ${selectedDoctor.fee && selectedDoctor.fee > 0 ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                      {selectedDoctor.fee && selectedDoctor.fee > 0 ? `Consultation Fee: ₹${selectedDoctor.fee}` : 'Free Consultation'}
+                <div className="mt-4">
+                  <h3 className=" text-gray-800 mb-1 text-sm font-semibold">Consultation</h3>
+                  <div className="flex items-center gap-2 text-xs text-gray-600">
+                    <span className={`px-2 py-0.5 rounded-full font-semibold ${selectedDoctor.fee && selectedDoctor.fee > 0 ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                      {selectedDoctor.fee && selectedDoctor.fee > 0 ? `Fee: ₹${selectedDoctor.fee}` : 'Free'}
                     </span>
                   </div>
                 </div>
 
-                <h3 className=" text-gray-800 mt-8 mb-3 text-lg">About</h3>
-                <p className="text-sm text-gray-500 leading-relaxed font-medium">{selectedDoctor.bio}</p>
+                <h3 className=" text-gray-800 mt-4 mb-1 text-sm font-semibold">About</h3>
+                <p className="text-xs text-gray-500 leading-snug font-medium line-clamp-3">{selectedDoctor.bio}</p>
 
-                <h3 className=" text-gray-800 mt-8 mb-4 text-lg">Reviews</h3>
+                <h3 className=" text-gray-800 mt-4 mb-2 text-sm font-semibold">Reviews</h3>
                 <div className="flex items-center">
                   {googlePlaceData?.reviews && googlePlaceData.reviews.length > 0 ? (
                     <>
@@ -400,18 +417,19 @@ export const BookingPage = () => {
             </div>
 
             {/* Right panel (Availability & Book) */}
-            <div className="flex-1 flex flex-col p-4 bg-gray-50/50">
-              <h3 className="text-2xl  text-gray-800 mb-8">Availability</h3>
+            <div className="flex-1 flex flex-col p-4 bg-gray-50/50 justify-between">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Availability</h3>
 
-              <div className="flex-1 flex flex-col gap-6">
+                <div className="flex-1 flex flex-col gap-3">
                 {/* In Person Schedule */}
                 {selectedDoctor.inPerson && (
-                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 className=" text-gray-800 mb-4 flex items-center gap-2 text-lg"><FaUserMd className="text-gray-400" /> In Person Visits</h3>
-                    <div className="flex flex-col gap-3">
-                      <div className="flex justify-between items-center border-b border-gray-50 pb-2">
-                        <span className="text-sm font-medium text-gray-500">Available Slots</span>
-                        <span className="text-xs  text-gray-700">{(selectedDoctor.inPersonHours && selectedDoctor.inPersonHours.length > 0) ? `${selectedDoctor.inPersonHours.length} slots` : 'Not Configured'}</span>
+                  <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <h3 className=" text-gray-800 mb-2 flex items-center gap-2 text-sm font-semibold"><FaUserMd className="text-gray-400" /> In Person Visits</h3>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex justify-between items-center border-b border-gray-50 pb-1">
+                        <span className="text-xs font-medium text-gray-500">Available Slots</span>
+                        <span className="text-xs font-semibold text-gray-700">{(selectedDoctor.inPersonHours && selectedDoctor.inPersonHours.length > 0) ? `${selectedDoctor.inPersonHours.length} slots` : 'Not Configured'}</span>
                       </div>
                     </div>
                   </div>
@@ -419,20 +437,21 @@ export const BookingPage = () => {
 
                 {/* Online Schedule */}
                 {selectedDoctor.onlineConsult && (
-                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 className=" text-gray-800 mb-4 flex items-center gap-2 text-lg"><FaVideo className="text-green-500" /> Online Consultation</h3>
+                  <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <h3 className=" text-gray-800 mb-2 flex items-center gap-2 text-sm font-semibold"><FaVideo className="text-green-500" /> Online Consultation</h3>
                     <div className="flex justify-between items-center pb-1">
-                      <span className="text-sm font-medium text-gray-500">Available Slots</span>
-                      <span className="text-xs  text-gray-700">{(selectedDoctor.onlineHours && selectedDoctor.onlineHours.length > 0) ? `${selectedDoctor.onlineHours.length} slots` : 'Not Configured'}</span>
+                      <span className="text-xs font-medium text-gray-500">Available Slots</span>
+                      <span className="text-xs font-semibold text-gray-700">{(selectedDoctor.onlineHours && selectedDoctor.onlineHours.length > 0) ? `${selectedDoctor.onlineHours.length} slots` : 'Not Configured'}</span>
                     </div>
                   </div>
                 )}
               </div>
+              </div>
 
-              <div className="mt-8 pt-8 border-t border-gray-200/60">
+              <div className="mt-4 pt-4 border-t border-gray-200/60">
                 <button
                   onClick={() => navigate(`/${tenant?.slug}/book/${selectedDoctor.id}`)}
-                  className="w-full py-4 rounded-[14px]  text-white shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg flex items-center justify-center gap-2 text-[17px] bg-[var(--color-primary)]"
+                  className="w-full py-3 rounded-[12px] font-semibold text-white shadow-sm transition-all duration-200 hover:opacity-90 hover:shadow-md flex items-center justify-center gap-2 text-sm bg-[var(--color-primary)]"
                 >
                   Book an Appointment
                 </button>
