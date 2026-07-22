@@ -293,7 +293,7 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
                   {otp.map((digit, i) => (
                     <input
                       key={i}
-                      ref={el => otpRefs.current[i] = el}
+                      ref={el => { otpRefs.current[i] = el; }}
                       type="text"
                       inputMode="numeric"
                       maxLength={1}

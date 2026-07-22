@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { BookingData } from '../../../pages/BookingWizardPage';
-import { FaCalendarAlt, FaClock, FaUser, FaStethoscope, FaMapMarkerAlt, FaNotesMedical, FaQrcode, FaCreditCard, FaUniversity, FaMobileAlt, FaCheckCircle, FaSpinner, FaLock } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaUser, FaStethoscope, FaMapMarkerAlt, FaNotesMedical, FaQrcode, FaCreditCard, FaUniversity, FaCheckCircle, FaSpinner, FaLock } from 'react-icons/fa';
 import { useTheme } from '../../../theme/ThemeProvider';
 
 interface Props {
