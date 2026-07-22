@@ -36,7 +36,7 @@ export const AdminDashboard = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tenants.map(tenant => (
-            <div key={tenant.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col hover:shadow-md transition-shadow">
+            <div key={tenant.id} className="bg-white rounded p-4 shadow-sm border border-gray-100 flex flex-col hover:shadow-md transition-shadow">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-16 h-16 rounded-xl border border-gray-100 overflow-hidden flex items-center justify-center bg-gray-50 shrink-0">
                   {tenant.logoUrl ? (
