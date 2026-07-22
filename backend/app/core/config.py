@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     BASE_URL: str = "http://localhost:8000"
     CLIENT_ORIGIN: str = "http://localhost:5173"
+    PORT: int = 8000
     
     # Security
     SECRET_KEY: str = "supersecretkey_change_in_production"
