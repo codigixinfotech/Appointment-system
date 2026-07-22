@@ -1,7 +1,14 @@
+import os
 import requests
 import json
+from dotenv import load_dotenv
 
-BASE_URL = "http://localhost:8000/api"
+# Load environment variables from .env file
+load_dotenv()
+
+# Get base url from environment or fallback to localhost
+ENV_BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
+BASE_URL = f"{ENV_BASE_URL.rstrip('/')}/api"
 
 # 1. Create Tenant (Hospital)
 tenant_data = {
