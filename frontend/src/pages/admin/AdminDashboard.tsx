@@ -23,7 +23,7 @@ export const AdminDashboard = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-10">
           <div>
-            <h1 className="text-2xl  text-gray-900">SaaS Admin Panel</h1>
+            <h1 className="text-2xl  text-gray-900 bg-red-600">SaaS Admin Panel</h1>
             <p className="text-gray-500 mt-1 text-xs">Manage your multi-tenant hospital platform</p>
           </div>
           <button

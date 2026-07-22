@@ -1,0 +1,50 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            # Go to the project root directory
+            cd /var/www/Appointment-system
+            
+            # Reset any local changes and pull the latest code
+            git reset --hard HEAD
+            git pull origin main
+            
+            # 1. Deploy Backend
+            echo "Deploying Backend..."
+            cd backend
+            # Make sure venv exists and activate it
+            if [ ! -d "venv" ]; then
+                python3 -m venv venv
+            fi
+            source venv/bin/activate
+            pip install -r requirements.txt
+            
+            # Restart the backend process under PM2
+            pm2 restart appointment-backend || pm2 start "venv/bin/python run.py" --name "appointment-backend"
+            
+            # 2. Deploy Frontend
+            echo "Deploying Frontend..."
+            cd ../frontend
+            npm install
+            npm run build
+            
+            echo "Deployment successfully completed!"
