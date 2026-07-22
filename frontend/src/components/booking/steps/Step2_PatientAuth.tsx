@@ -31,7 +31,7 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
   const [error, setError] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [debugOtp, setDebugOtp] = useState('');
-  
+
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm<FormValues>({
@@ -58,7 +58,7 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
 
   const onFormSubmit = async (formData: FormValues) => {
     setError('');
-    
+
     // Save patient details first
     updateData({
       mobile: formData.mobile,
@@ -92,7 +92,7 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
 
   const handleOtpChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
-    
+
     const newOtp = [...otp];
     newOtp[index] = value.slice(-1);
     setOtp(newOtp);
@@ -131,13 +131,13 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
   return (
     <div className="flex flex-col h-full bg-white rounded-2xl">
       <div className="flex justify-between items-center mb-6 shrink-0">
-        <h3 className="text-xl font-bold text-gray-800">Patient Details & Verification</h3>
+        <h3 className="text-xl  text-gray-800">Patient Details & Verification</h3>
       </div>
-      
+
       <div className="flex-1 overflow-y-auto pr-2 pb-4 scrollbar-hide flex justify-center">
         <div className="w-full max-w-2xl bg-gray-50/50 rounded-3xl p-6 sm:p-10 border border-gray-100 shadow-sm relative overflow-hidden h-fit mt-4">
           <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--color-primary)] opacity-5 rounded-bl-full -z-0"></div>
-          
+
           <AnimatePresence mode="wait">
             {!otpSent ? (
               <motion.form
@@ -149,22 +149,21 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
                 className="relative z-10"
                 onSubmit={handleSubmit(onFormSubmit)}
               >
-                <h4 className="text-2xl font-bold text-gray-800 mb-2">Who is the appointment for?</h4>
+                <h4 className="text-2xl  text-gray-800 mb-2">Who is the appointment for?</h4>
                 <p className="text-gray-500 mb-8 text-sm">Please provide accurate details and a valid mobile number for verification.</p>
-                
+
                 <div className="space-y-6">
                   {/* Full Name */}
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                    <label className="block text-xs  text-gray-700 mb-2 flex items-center gap-2">
                       <FaUserAlt className="text-gray-400" /> Full Name
                     </label>
                     <input
                       type="text"
                       {...register('name')}
                       placeholder="e.g. John Doe"
-                      className={`w-full p-4 text-lg font-medium bg-white rounded-xl border shadow-sm transition-all focus:outline-none focus:ring-2 ${
-                        errors.name ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 focus:border-[var(--color-primary)] focus:ring-blue-100'
-                      }`}
+                      className={`w-full p-4 text-lg font-medium bg-white rounded-xl border shadow-sm transition-all focus:outline-none focus:ring-2 ${errors.name ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 focus:border-[var(--color-primary)] focus:ring-blue-100'
+                        }`}
                     />
                     {errors.name && <p className="text-red-500 text-xs font-semibold mt-2 px-1">{errors.name.message as string}</p>}
                   </div>
@@ -172,30 +171,29 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
                   <div className="flex flex-col sm:flex-row gap-6">
                     {/* Age */}
                     <div className="w-full sm:w-1/3">
-                      <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                      <label className="block text-xs  text-gray-700 mb-2 flex items-center gap-2">
                         <FaBirthdayCake className="text-gray-400" /> Age
                       </label>
                       <input
                         type="number"
                         {...register('age')}
                         placeholder="e.g. 28"
-                        className={`w-full p-4 text-lg font-medium bg-white rounded-xl border shadow-sm transition-all focus:outline-none focus:ring-2 ${
-                          errors.age ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 focus:border-[var(--color-primary)] focus:ring-blue-100'
-                        }`}
+                        className={`w-full p-4 text-lg font-medium bg-white rounded-xl border shadow-sm transition-all focus:outline-none focus:ring-2 ${errors.age ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 focus:border-[var(--color-primary)] focus:ring-blue-100'
+                          }`}
                       />
                       {errors.age && <p className="text-red-500 text-xs font-semibold mt-2 px-1">{errors.age.message as string}</p>}
                     </div>
 
                     {/* Gender */}
                     <div className="w-full sm:w-2/3">
-                      <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                      <label className="block text-xs  text-gray-700 mb-2 flex items-center gap-2">
                         <FaVenusMars className="text-gray-400" /> Gender
                       </label>
                       <div className="grid grid-cols-3 gap-3">
                         {['Male', 'Female', 'Other'].map((g) => (
                           <label key={g} className="cursor-pointer relative">
                             <input type="radio" value={g} {...register('gender')} className="peer sr-only" />
-                            <div className="p-4 text-center text-sm font-bold bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 peer-checked:bg-[var(--color-primary)]/10 peer-checked:border-[var(--color-primary)] peer-checked:text-[var(--color-primary)] transition-all">
+                            <div className="p-4 text-center text-sm  bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 peer-checked:bg-[var(--color-primary)]/10 peer-checked:border-[var(--color-primary)] peer-checked:text-[var(--color-primary)] transition-all">
                               {g}
                             </div>
                           </label>
@@ -207,7 +205,7 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
 
                   {/* Mobile */}
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                    <label className="block text-xs  text-gray-700 mb-2 flex items-center gap-2">
                       <FaMobileAlt className="text-gray-400" /> Mobile Number
                     </label>
                     <div className={`flex items-center bg-white border rounded-xl overflow-hidden shadow-sm transition-all ${errors.mobile ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 focus-within:border-[var(--color-primary)] focus-within:ring-2 focus-within:ring-blue-100'}`}>
@@ -223,7 +221,7 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
                           register('mobile').onChange(e);
                         }}
                         placeholder="9876543210"
-                        className="flex-1 w-full bg-transparent px-4 py-4 text-lg font-bold text-gray-800 focus:outline-none tracking-wider placeholder:font-normal placeholder:tracking-normal"
+                        className="flex-1 w-full bg-transparent px-4 py-4 text-lg  text-gray-800 focus:outline-none tracking-wider placeholder:font-normal placeholder:tracking-normal"
                       />
                     </div>
                     {errors.mobile && <p className="text-red-500 text-xs font-semibold mt-2 px-1">{errors.mobile.message as string}</p>}
@@ -231,38 +229,36 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
 
                   {/* Description */}
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                    <label className="block text-xs  text-gray-700 mb-2 flex items-center gap-2">
                       <FaNotesMedical className="text-gray-400" /> Symptoms / Reason (Optional)
                     </label>
                     <textarea
                       {...register('description')}
                       rows={3}
                       placeholder="Briefly describe what you are experiencing..."
-                      className={`w-full p-4 text-sm font-medium bg-white rounded-xl border shadow-sm transition-all focus:outline-none focus:ring-2 resize-none ${
-                        errors.description ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 focus:border-[var(--color-primary)] focus:ring-blue-100'
-                      }`}
+                      className={`w-full p-4 text-sm font-medium bg-white rounded-xl border shadow-sm transition-all focus:outline-none focus:ring-2 resize-none ${errors.description ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200 focus:border-[var(--color-primary)] focus:ring-blue-100'
+                        }`}
                     />
                     {errors.description && <p className="text-red-500 text-xs font-semibold mt-2 px-1">{errors.description.message as string}</p>}
                   </div>
 
-                  {error && <p className="text-red-500 text-sm font-bold mt-2 text-center">{error}</p>}
-                  
+                  {error && <p className="text-red-500 text-sm  mt-2 text-center">{error}</p>}
+
                   <div className="mt-8 pt-6 border-t border-gray-100 flex justify-between shrink-0">
                     <button
                       type="button"
                       onClick={prev}
-                      className="px-8 py-3.5 rounded-xl font-bold text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+                      className="px-8 py-3.5 rounded-xl  text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
                     >
                       Back
                     </button>
                     <button
                       type="submit"
                       disabled={!isValid || isVerifying}
-                      className={`px-10 py-3.5 rounded-xl font-bold transition-all text-lg flex items-center gap-2 ${
-                        isValid && !isVerifying
-                          ? 'bg-[var(--color-primary)] text-white hover:opacity-90 shadow-md' 
-                          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      }`}
+                      className={`px-10 py-3.5 rounded-xl  transition-all text-lg flex items-center gap-2 ${isValid && !isVerifying
+                        ? 'bg-[var(--color-primary)] text-white hover:opacity-90 shadow-md'
+                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        }`}
                     >
                       {isVerifying ? <><FaSpinner className="animate-spin" /> Sending...</> : 'Get Verification Code'}
                     </button>
@@ -281,18 +277,18 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
                 <div className="w-16 h-16 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-green-100/50">
                   <FaShieldAlt className="text-3xl" />
                 </div>
-                <h4 className="text-2xl font-bold text-gray-800 mb-2">Verify it's you</h4>
+                <h4 className="text-2xl  text-gray-800 mb-2">Verify it's you</h4>
                 <p className="text-gray-500 mb-6 text-sm leading-relaxed text-center">
-                  We've sent a code to <span className="font-bold text-gray-800">+91 {mobileValue}</span>. 
-                  <button onClick={() => { setOtpSent(false); setOtp(['','','','']); }} className="text-[var(--color-primary)] font-semibold ml-2 hover:underline">Edit Info</button>
+                  We've sent a code to <span className=" text-gray-800">+91 {mobileValue}</span>.
+                  <button onClick={() => { setOtpSent(false); setOtp(['', '', '', '']); }} className="text-[var(--color-primary)] font-semibold ml-2 hover:underline">Edit Info</button>
                 </p>
-                
+
                 {debugOtp && (
                   <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 rounded-lg mb-6 text-sm text-center font-medium shadow-sm w-full max-w-sm">
-                    Developer Mode: Your OTP is <span className="font-bold text-lg">{debugOtp}</span>
+                    Developer Mode: Your OTP is <span className=" text-lg">{debugOtp}</span>
                   </div>
                 )}
-                
+
                 <div className="flex gap-4 justify-center mb-2">
                   {otp.map((digit, i) => (
                     <input
@@ -304,11 +300,10 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
                       value={digit}
                       onChange={(e) => handleOtpChange(i, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                      className={`w-14 h-16 text-center text-3xl font-bold rounded-xl bg-white border shadow-sm focus:outline-none transition-all ${
-                        error 
-                          ? 'border-red-400 text-red-500 ring-2 ring-red-100' 
-                          : 'border-gray-200 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-blue-100'
-                      }`}
+                      className={`w-14 h-16 text-center text-3xl  rounded-xl bg-white border shadow-sm focus:outline-none transition-all ${error
+                        ? 'border-red-400 text-red-500 ring-2 ring-red-100'
+                        : 'border-gray-200 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-blue-100'
+                        }`}
                     />
                   ))}
                 </div>
@@ -316,14 +311,14 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
 
                 <div className="text-center mt-6 mb-8 text-sm font-medium">
                   {timer > 0 ? (
-                    <span className="text-gray-500">Resend code in <span className="text-[var(--color-primary)] font-bold">00:{timer.toString().padStart(2, '0')}</span></span>
+                    <span className="text-gray-500">Resend code in <span className="text-[var(--color-primary)] ">00:{timer.toString().padStart(2, '0')}</span></span>
                   ) : (
-                    <button 
+                    <button
                       onClick={() => {
-                        setTimer(30); setOtp(['','','','']); setError('');
+                        setTimer(30); setOtp(['', '', '', '']); setError('');
                         onFormSubmit(watch()); // Resubmit to send OTP again
                       }}
-                      className="text-[var(--color-primary)] font-bold hover:underline"
+                      className="text-[var(--color-primary)]  hover:underline"
                     >
                       Resend Verification Code
                     </button>
@@ -332,19 +327,18 @@ export const Step2_PatientAuth: React.FC<Props> = ({ data, updateData, next, pre
 
                 <div className="w-full mt-4 pt-6 border-t border-gray-100 flex justify-between">
                   <button
-                    onClick={() => { setOtpSent(false); setOtp(['','','','']); }}
-                    className="px-8 py-3.5 rounded-xl font-bold text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+                    onClick={() => { setOtpSent(false); setOtp(['', '', '', '']); }}
+                    className="px-8 py-3.5 rounded-xl  text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
                   >
                     Back
                   </button>
                   <button
                     onClick={handleVerify}
                     disabled={otp.join('').length < 4 || isVerifying}
-                    className={`px-10 py-3.5 rounded-xl font-bold transition-all text-lg flex items-center justify-center gap-2 ${
-                      otp.join('').length === 4
-                        ? 'bg-[var(--color-primary)] text-white shadow-md hover:shadow-lg hover:-translate-y-0.5'
-                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    }`}
+                    className={`px-10 py-3.5 rounded-xl  transition-all text-lg flex items-center justify-center gap-2 ${otp.join('').length === 4
+                      ? 'bg-[var(--color-primary)] text-white shadow-md hover:shadow-lg hover:-translate-y-0.5'
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      }`}
                   >
                     {isVerifying ? (
                       <><FaSpinner className="animate-spin" /> Verifying...</>

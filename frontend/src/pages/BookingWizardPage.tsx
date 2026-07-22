@@ -111,7 +111,7 @@ export const BookingWizardPage: React.FC = () => {
             <img src={tenant.logoUrl} alt="Logo" className="h-full w-auto object-contain" />
           </div>
         )}
-        <h1 className="text-xl font-bold tracking-tight text-[var(--color-text-main)]">
+        <h1 className="text-xl  tracking-tight text-[var(--color-text-main)]">
           {tenant?.name}
         </h1>
       </header>
@@ -122,7 +122,7 @@ export const BookingWizardPage: React.FC = () => {
           {/* Left Sidebar: Wizard Steps */}
           {!isSuccess && (
             <div className="w-full md:w-[280px] border-r border-gray-100 bg-white p-4 shrink-0 flex flex-col gap-4 z-10">
-              <h3 className="text-xl font-bold text-gray-800 mb-4 mt-2">Setup Appointment</h3>
+              <h3 className="text-xl  text-gray-800 mb-4 mt-2">Setup Appointment</h3>
               <div className="flex flex-col gap-6 relative">
                 {/* Vertical connecting line */}
                 <div className="absolute left-[15px] top-4 bottom-4 w-px bg-gray-100 -z-10" />
@@ -134,7 +134,7 @@ export const BookingWizardPage: React.FC = () => {
                   return (
                     <div key={s.id} className="flex items-start gap-4">
                       {/* Circle Indicator */}
-                      <div 
+                      <div
                         className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm transition-colors border`}
                         style={{
                           backgroundColor: isActive ? 'var(--color-primary)' : isCompleted ? '#ffffff' : '#ffffff',
@@ -152,14 +152,14 @@ export const BookingWizardPage: React.FC = () => {
 
                       {/* Text */}
                       <div className="flex flex-col">
-                        <span 
+                        <span
                           className="text-[15px] font-semibold"
                           style={{ color: isActive ? 'var(--color-primary)' : '#374151' }}
                         >
                           {s.title}
                         </span>
-                        <span 
-                          className="text-[11px] font-bold mt-0.5"
+                        <span
+                          className="text-[11px]  mt-0.5"
                           style={{ color: isCompleted ? 'var(--color-primary)' : '#9ca3af' }}
                         >
                           {s.subtitle}
@@ -196,13 +196,13 @@ export const BookingWizardPage: React.FC = () => {
                   <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
                     <FaCheckCircle className="text-green-500 text-6xl" />
                   </div>
-                  <h2 className="text-3xl font-bold text-gray-800 mb-2">Booking Confirmed!</h2>
+                  <h2 className="text-3xl  text-gray-800 mb-2">Booking Confirmed!</h2>
                   <p className="text-gray-500 max-w-md mb-8">
                     Your appointment with <span className="font-semibold text-gray-800">{bookingData.doctor?.name}</span> on <span className="font-semibold text-gray-800">{bookingData.date}</span> at <span className="font-semibold text-gray-800">{bookingData.timeSlot}</span> has been confirmed. We have sent the details to {bookingData.mobile}.
                   </p>
                   <button
                     onClick={handleClose}
-                    className="px-8 py-3 rounded-xl text-white font-bold hover:opacity-90 transition-opacity text-lg"
+                    className="px-8 py-3 rounded-xl text-white  hover:opacity-90 transition-opacity text-lg"
                     style={{ backgroundColor: 'var(--color-primary)' }}
                   >
                     Return to Portal

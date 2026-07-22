@@ -77,7 +77,7 @@ export const DoctorManager = () => {
     const start = new Date(fromDate);
     const end = new Date(toDate);
     const dates: string[] = [];
-    
+
     let current = new Date(start);
     while (current <= end) {
       dates.push(current.toISOString().split('T')[0]);
@@ -109,7 +109,7 @@ export const DoctorManager = () => {
   const handleAddDoctor = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id) return;
-    
+
     const doctorData = {
       tenantId: id,
       name: formData.name || '',
@@ -135,7 +135,7 @@ export const DoctorManager = () => {
     } else {
       await db.createDoctor(doctorData);
     }
-    
+
     resetForm();
     loadData();
   };
@@ -154,51 +154,51 @@ export const DoctorManager = () => {
 
         <div className="flex justify-between items-end mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Manage Doctors</h1>
-            <p className="text-gray-500 mt-1">Hospital: <strong className="text-indigo-600">{tenant.name}</strong></p>
+            <h1 className="text-2xl  text-gray-900">Manage Doctors</h1>
+            <p className="text-gray-500 mt-1 text-xs">Hospital: <strong className="text-indigo-600">{tenant.name}</strong></p>
           </div>
           <button
             onClick={() => setIsAdding(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-md transition-colors"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded  text-xs flex items-center gap-2 shadow-md transition-colors"
           >
             <FaPlus /> Add Doctor
           </button>
         </div>
 
         {isAdding && (
-          <form onSubmit={handleAddDoctor} className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <h3 className="col-span-full text-xl font-bold mb-2">{editingDoctorId ? 'Edit Doctor Profile' : 'New Doctor Profile'}</h3>
-            
+          <form onSubmit={handleAddDoctor} className="bg-white rounded p-4 border border-gray-100 mb-8 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <h3 className="col-span-full text-xl  mb-2">{editingDoctorId ? 'Edit Doctor Profile' : 'New Doctor Profile'}</h3>
+
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-gray-700">Name</label>
-              <input required type="text" placeholder="Dr. John Doe" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
-            </div>
-            
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-gray-700">Speciality</label>
-              <input required type="text" placeholder="Cardiologist" value={formData.speciality} onChange={e => setFormData({...formData, speciality: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
+              <label className="text-xs  text-gray-700">Name</label>
+              <input required type="text" placeholder="Dr. John Doe" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-gray-700">Photo URL</label>
-              <input type="text" placeholder="https://..." value={formData.photo} onChange={e => setFormData({...formData, photo: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
+              <label className="text-xs  text-gray-700">Speciality</label>
+              <input required type="text" placeholder="Cardiologist" value={formData.speciality} onChange={e => setFormData({ ...formData, speciality: e.target.value })} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-gray-700">Experience (Years)</label>
-              <input type="text" placeholder="10 Years" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-gray-700">Email Address</label>
-              <input type="email" placeholder="doctor@example.com" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
+              <label className="text-xs  text-gray-700">Photo URL</label>
+              <input type="text" placeholder="https://..." value={formData.photo} onChange={e => setFormData({ ...formData, photo: e.target.value })} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-gray-700">Mobile Number</label>
-              <input type="tel" placeholder="+1 234 567 8900" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
+              <label className="text-xs  text-gray-700">Experience (Years)</label>
+              <input type="text" placeholder="10 Years" value={formData.experience} onChange={e => setFormData({ ...formData, experience: e.target.value })} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs  text-gray-700">Email Address</label>
+              <input type="email" placeholder="doctor@example.com" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs  text-gray-700">Mobile Number</label>
+              <input type="tel" placeholder="+1 234 567 8900" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
             </div>
             <div className="flex flex-col gap-2 col-span-full mt-4">
-              <label className="text-sm font-bold text-gray-700">In-Person Time Slots</label>
+              <label className="text-xs  text-gray-700">In-Person Time Slots</label>
               <div className="flex flex-wrap gap-2">
                 {STANDARD_SLOTS.map(slot => (
                   <button
@@ -207,9 +207,9 @@ export const DoctorManager = () => {
                     onClick={() => {
                       const current = formData.inPersonHours || [];
                       const isSelected = current.includes(slot);
-                      setFormData({...formData, inPersonHours: isSelected ? current.filter(s => s !== slot) : [...current, slot]});
+                      setFormData({ ...formData, inPersonHours: isSelected ? current.filter(s => s !== slot) : [...current, slot] });
                     }}
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${formData.inPersonHours?.includes(slot) ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                    className={`px-3 py-1.5 rounded-full text-xs  transition-colors ${formData.inPersonHours?.includes(slot) ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                   >
                     {slot}
                   </button>
@@ -218,7 +218,7 @@ export const DoctorManager = () => {
             </div>
 
             <div className="flex flex-col gap-2 col-span-full">
-              <label className="text-sm font-bold text-gray-700">Online Time Slots</label>
+              <label className="text-xs  text-gray-700">Online Time Slots</label>
               <div className="flex flex-wrap gap-2">
                 {STANDARD_SLOTS.map(slot => (
                   <button
@@ -227,9 +227,9 @@ export const DoctorManager = () => {
                     onClick={() => {
                       const current = formData.onlineHours || [];
                       const isSelected = current.includes(slot);
-                      setFormData({...formData, onlineHours: isSelected ? current.filter(s => s !== slot) : [...current, slot]});
+                      setFormData({ ...formData, onlineHours: isSelected ? current.filter(s => s !== slot) : [...current, slot] });
                     }}
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${formData.onlineHours?.includes(slot) ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                    className={`px-3 py-1.5 rounded-full text-xs  transition-colors ${formData.onlineHours?.includes(slot) ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                   >
                     {slot}
                   </button>
@@ -238,19 +238,19 @@ export const DoctorManager = () => {
             </div>
 
             <div className="flex flex-col gap-2 col-span-full">
-              <label className="text-sm font-bold text-gray-700">Unavailable Dates</label>
-              
+              <label className="text-xs  text-gray-700">Unavailable Dates</label>
+
               {/* Added Range UI */}
               <div className="flex flex-wrap items-end gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-bold text-gray-500 uppercase">From Date</label>
+                  <label className="text-xs  text-gray-500 uppercase">From Date</label>
                   <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} className="px-3 py-1.5 border border-gray-200 rounded-lg outline-none text-sm" />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-bold text-gray-500 uppercase">To Date</label>
+                  <label className="text-xs  text-gray-500 uppercase">To Date</label>
                   <input type="date" value={toDate} onChange={e => setToDate(e.target.value)} className="px-3 py-1.5 border border-gray-200 rounded-lg outline-none text-sm" />
                 </div>
-                <button type="button" onClick={handleAddRange} disabled={!fromDate || !toDate} className="px-4 py-1.5 bg-indigo-100 text-indigo-700 font-bold rounded-lg text-sm hover:bg-indigo-200 disabled:opacity-50 transition-colors">
+                <button type="button" onClick={handleAddRange} disabled={!fromDate || !toDate} className="px-4 py-1.5 bg-indigo-100 text-indigo-700  rounded-lg text-sm hover:bg-indigo-200 disabled:opacity-50 transition-colors">
                   Add Date Range
                 </button>
               </div>
@@ -258,9 +258,9 @@ export const DoctorManager = () => {
               {/* Display existing unavailable dates */}
               <div className="flex flex-wrap gap-2 mt-2">
                 {formData.unavailableDates?.map(date => (
-                  <div key={date} className="flex items-center gap-1 bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-bold border border-red-100">
+                  <div key={date} className="flex items-center gap-1 bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs  border border-red-100">
                     {date}
-                    <button type="button" onClick={() => setFormData({...formData, unavailableDates: formData.unavailableDates?.filter(d => d !== date)})} className="hover:text-red-800 ml-1">
+                    <button type="button" onClick={() => setFormData({ ...formData, unavailableDates: formData.unavailableDates?.filter(d => d !== date) })} className="hover:text-red-800 ml-1">
                       &times;
                     </button>
                   </div>
@@ -272,8 +272,8 @@ export const DoctorManager = () => {
             </div>
 
             <div className="col-span-full flex justify-end gap-4 mt-4">
-              <button type="button" onClick={() => setIsAdding(false)} className="px-6 py-2 text-gray-500 font-bold hover:bg-gray-100 rounded-lg">Cancel</button>
-              <button type="submit" className="px-8 py-2 bg-indigo-600 text-white font-bold rounded-lg shadow-sm">Save Doctor</button>
+              <button type="button" onClick={() => setIsAdding(false)} className="px-6 py-2 text-gray-500  hover:bg-gray-100 rounded-lg">Cancel</button>
+              <button type="submit" className="px-8 py-2 bg-indigo-600 text-white  rounded-lg shadow-sm">Save Doctor</button>
             </div>
           </form>
         )}
@@ -290,12 +290,12 @@ export const DoctorManager = () => {
                 </button>
               </div>
               <img src={doctor.photo} alt={doctor.name} className="w-24 h-24 rounded-full object-cover mb-4 shadow-sm" />
-              <h4 className="font-bold text-lg">{doctor.name}</h4>
+              <h4 className=" text-lg">{doctor.name}</h4>
               <span className="text-sm text-indigo-600 font-semibold bg-indigo-50 px-3 py-1 rounded-full mt-2 mb-4">{doctor.speciality}</span>
               <p className="text-sm text-gray-500 flex items-center justify-center gap-1 mb-4"><FaUserMd /> {doctor.experience}</p>
             </div>
           ))}
-          
+
           {doctors.length === 0 && !isAdding && (
             <div className="col-span-full py-12 text-center text-gray-500">
               No doctors added yet. Click "Add Doctor" to begin.

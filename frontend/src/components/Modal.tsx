@@ -44,7 +44,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
-              <h2 className="text-xl font-bold text-[var(--color-text-main)]">
+              <h2 className="text-xl  text-[var(--color-text-main)]">
                 {title || 'Details'}
               </h2>
               <button

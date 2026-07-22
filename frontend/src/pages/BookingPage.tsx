@@ -42,7 +42,7 @@ export const BookingPage = () => {
               <img src={tenant.logoUrl} alt="Logo" className="h-full w-auto object-contain" />
             </div>
           )}
-          <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text-main)]">
+          <h1 className="text-2xl  tracking-tight text-[var(--color-text-main)]">
             {tenant?.name}
           </h1>
         </div>
@@ -57,7 +57,7 @@ export const BookingPage = () => {
         <div className="lg:col-span-8 flex flex-col gap-6">
           <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
             <div>
-              <h2 className="text-2xl font-bold text-[var(--color-text-main)]">Our Specialists</h2>
+              <h2 className="text-2xl  text-[var(--color-text-main)]">Our Specialists</h2>
               <p className="text-gray-500 text-sm mt-1">Select a doctor to view their profile or book an appointment.</p>
             </div>
             <div className="relative w-full sm:w-64 shrink-0">
@@ -84,14 +84,14 @@ export const BookingPage = () => {
 
                 {/* Left Side: Photo and Rating */}
                 <div className="p-6 pb-8 flex flex-col items-center justify-center relative sm:border-r border-gray-100 bg-gray-50/30 w-full sm:w-56 shrink-0">
-                  <div className="absolute top-4 left-4 flex items-center gap-1 text-[var(--color-accent)] text-xs font-bold">
+                  <div className="absolute top-4 left-4 flex items-center gap-1 text-[var(--color-accent)] text-xs ">
                     {doctor.rating.toFixed(1)} <FaStar />
                   </div>
 
                   <div className="w-24 h-24 rounded-full border-[3px] border-white p-1 bg-white relative shadow-sm mt-2">
                     <img src={doctor.photo} alt={doctor.name} className="w-full h-full rounded-full object-cover" />
                   </div>
-                  <div className="-mt-3 z-20 bg-white px-4 py-1 rounded-full text-[10px] font-bold shadow-sm border border-gray-100 uppercase tracking-wider" style={{ color: 'var(--color-primary)' }}>
+                  <div className="-mt-3 z-20 bg-white px-4 py-1 rounded-full text-[10px]  shadow-sm border border-gray-100 uppercase tracking-wider" style={{ color: 'var(--color-primary)' }}>
                     {doctor.speciality}
                   </div>
                 </div>
@@ -102,7 +102,7 @@ export const BookingPage = () => {
                     <FaHeart />
                   </div>
 
-                  <h3 className="text-xl font-bold text-gray-800">{doctor.name}</h3>
+                  <h3 className="text-xl  text-gray-800">{doctor.name}</h3>
                   <p className="text-sm text-gray-400 mt-2 flex items-center justify-center sm:justify-start gap-1">
                     <FaMapMarkerAlt className="shrink-0" /> {doctor.address}
                   </p>
@@ -137,7 +137,7 @@ export const BookingPage = () => {
                   </button>
                   <button
                     onClick={() => navigate(`/${tenant?.slug}/book/${doctor.id}`)}
-                    className="flex-1 py-4 sm:py-0 text-sm font-bold hover:bg-gray-100 transition-colors flex items-center justify-center h-full bg-white sm:bg-transparent"
+                    className="flex-1 py-4 sm:py-0 text-sm  hover:bg-gray-100 transition-colors flex items-center justify-center h-full bg-white sm:bg-transparent"
                     style={{ color: 'var(--color-primary)' }}
                   >
                     Book Appointment
@@ -160,8 +160,8 @@ export const BookingPage = () => {
                   <FaMapMarkerAlt className="text-xl" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[var(--color-text-main)] mb-2">{tenant?.name}</h3>
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mt-1 mb-4">{tenant?.brandName}</div>
+                  <h3 className="text-xl  text-[var(--color-text-main)] mb-2">{tenant?.name}</h3>
+                  <div className="text-[10px]  uppercase tracking-wider text-gray-400 mt-1 mb-4">{tenant?.brandName}</div>
                 </div>
               </div>
 
@@ -192,11 +192,11 @@ export const BookingPage = () => {
 
               {tenant?.workingHours && tenant.workingHours.length > 0 && (
                 <div className="mt-8 pt-6 border-t border-gray-100">
-                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Working Hours</h4>
+                  <h4 className="text-xs  text-gray-400 uppercase tracking-wider mb-4">Working Hours</h4>
                   {tenant.workingHours.map((wh, idx) => (
                     <div key={idx} className={`flex justify-between items-center p-3 rounded-xl mb-2 ${wh.isEmergency ? 'bg-red-50 border border-red-100' : 'bg-gray-50'}`}>
-                      <span className={`text-sm font-medium ${wh.isEmergency ? 'text-red-600 font-bold' : 'text-gray-500'}`}>{wh.label}</span>
-                      <span className={`text-sm font-bold flex items-center gap-1 ${wh.isEmergency ? 'text-red-600' : 'text-gray-800'}`}>
+                      <span className={`text-sm font-medium ${wh.isEmergency ? 'text-red-600 ' : 'text-gray-500'}`}>{wh.label}</span>
+                      <span className={`text-sm  flex items-center gap-1 ${wh.isEmergency ? 'text-red-600' : 'text-gray-800'}`}>
                         {wh.isEmergency && <FaPhoneAlt className="text-xs" />} {wh.time}
                       </span>
                     </div>
@@ -241,7 +241,7 @@ export const BookingPage = () => {
               <div className="bg-white rounded-t-[30px] -mt-6 relative z-10 px-8 pt-6 pb-2 flex flex-col shadow-[0_-10px_20px_rgba(0,0,0,0.03)]">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-800 tracking-tight">{selectedDoctor.name}</h2>
+                    <h2 className="text-2xl  text-gray-800 tracking-tight">{selectedDoctor.name}</h2>
                     <div className="text-sm text-gray-400 mt-1 font-medium">{selectedDoctor.speciality}, {tenant?.brandName}</div>
                     <div className="text-sm mt-1.5 flex items-center gap-1 font-medium" style={{ color: 'var(--color-primary)' }}>
                       <FaMapMarkerAlt /> {selectedDoctor.address.split(',')[0]}
@@ -254,22 +254,22 @@ export const BookingPage = () => {
 
                 <div className="flex justify-between gap-3 mt-8">
                   <div className="flex-1 bg-white border border-gray-100 rounded-2xl py-4 px-2 flex flex-col items-center justify-center shadow-sm">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">Patients</span>
-                    <div className="flex items-center gap-1.5 text-base font-bold text-gray-800"><FaUser className="text-[var(--color-primary)]" /> 380+</div>
+                    <span className="text-[10px] text-gray-400  uppercase tracking-wider mb-1.5">Patients</span>
+                    <div className="flex items-center gap-1.5 text-base  text-gray-800"><FaUser className="text-[var(--color-primary)]" /> 380+</div>
                   </div>
                   <div className="flex-1 bg-white border border-gray-100 rounded-2xl py-4 px-2 flex flex-col items-center justify-center shadow-sm">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">Experience</span>
-                    <div className="flex items-center gap-1.5 text-base font-bold text-gray-800"><FaCheckCircle className="text-[var(--color-primary)]" /> {selectedDoctor.experience.split(' ')[0]} Yrs+</div>
+                    <span className="text-[10px] text-gray-400  uppercase tracking-wider mb-1.5">Experience</span>
+                    <div className="flex items-center gap-1.5 text-base  text-gray-800"><FaCheckCircle className="text-[var(--color-primary)]" /> {selectedDoctor.experience.split(' ')[0]} Yrs+</div>
                   </div>
                   <div className="flex-1 bg-white border border-gray-100 rounded-2xl py-4 px-2 flex flex-col items-center justify-center shadow-sm">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1.5">Rating</span>
-                    <div className="flex items-center gap-1.5 text-base font-bold text-gray-800"><FaStar className="text-[var(--color-primary)]" /> {selectedDoctor.rating.toFixed(1)}</div>
+                    <span className="text-[10px] text-gray-400  uppercase tracking-wider mb-1.5">Rating</span>
+                    <div className="flex items-center gap-1.5 text-base  text-gray-800"><FaStar className="text-[var(--color-primary)]" /> {selectedDoctor.rating.toFixed(1)}</div>
                   </div>
                 </div>
 
                 {(selectedDoctor.email || selectedDoctor.phone) && (
                   <div className="mt-8">
-                    <h3 className="font-bold text-gray-800 mb-3 text-lg">Contact</h3>
+                    <h3 className=" text-gray-800 mb-3 text-lg">Contact</h3>
                     <div className="flex flex-col gap-2">
                       {selectedDoctor.email && (
                         <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -285,10 +285,10 @@ export const BookingPage = () => {
                   </div>
                 )}
 
-                <h3 className="font-bold text-gray-800 mt-8 mb-3 text-lg">About</h3>
+                <h3 className=" text-gray-800 mt-8 mb-3 text-lg">About</h3>
                 <p className="text-sm text-gray-500 leading-relaxed font-medium">{selectedDoctor.bio}</p>
 
-                <h3 className="font-bold text-gray-800 mt-8 mb-4 text-lg">Reviews</h3>
+                <h3 className=" text-gray-800 mt-8 mb-4 text-lg">Reviews</h3>
                 <div className="flex items-center">
                   {googlePlaceData?.reviews && googlePlaceData.reviews.length > 0 ? (
                     <>
@@ -303,7 +303,7 @@ export const BookingPage = () => {
                         />
                       ))}
                       {googlePlaceData.user_ratings_total && googlePlaceData.user_ratings_total > 5 && (
-                        <div className="w-10 h-10 rounded-full border-2 border-white -ml-3 relative z-50 flex items-center justify-center text-[10px] text-white font-bold shadow-sm bg-[var(--color-primary)]">
+                        <div className="w-10 h-10 rounded-full border-2 border-white -ml-3 relative z-50 flex items-center justify-center text-[10px] text-white  shadow-sm bg-[var(--color-primary)]">
                           {googlePlaceData.user_ratings_total}+
                         </div>
                       )}
@@ -315,7 +315,7 @@ export const BookingPage = () => {
                       <img src="https://i.pravatar.cc/100?img=3" className="w-10 h-10 rounded-full border-2 border-white -ml-3 relative z-30 shadow-sm" alt="review" />
                       <img src="https://i.pravatar.cc/100?img=4" className="w-10 h-10 rounded-full border-2 border-white -ml-3 relative z-40 shadow-sm" alt="review" />
                       <img src="https://i.pravatar.cc/100?img=5" className="w-10 h-10 rounded-full border-2 border-white -ml-3 relative z-50 shadow-sm" alt="review" />
-                      <div className="w-10 h-10 rounded-full border-2 border-white -ml-3 relative z-50 flex items-center justify-center text-xs text-white font-bold shadow-sm bg-[var(--color-primary)]">15+</div>
+                      <div className="w-10 h-10 rounded-full border-2 border-white -ml-3 relative z-50 flex items-center justify-center text-xs text-white  shadow-sm bg-[var(--color-primary)]">15+</div>
                     </>
                   )}
                 </div>
@@ -324,17 +324,17 @@ export const BookingPage = () => {
 
             {/* Right panel (Availability & Book) */}
             <div className="flex-1 flex flex-col p-4 bg-gray-50/50">
-              <h3 className="text-2xl font-bold text-gray-800 mb-8">Availability</h3>
+              <h3 className="text-2xl  text-gray-800 mb-8">Availability</h3>
 
               <div className="flex-1 flex flex-col gap-6">
                 {/* In Person Schedule */}
                 {selectedDoctor.inPerson && (
                   <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg"><FaUserMd className="text-gray-400" /> In Person Visits</h3>
+                    <h3 className=" text-gray-800 mb-4 flex items-center gap-2 text-lg"><FaUserMd className="text-gray-400" /> In Person Visits</h3>
                     <div className="flex flex-col gap-3">
                       <div className="flex justify-between items-center border-b border-gray-50 pb-2">
                         <span className="text-sm font-medium text-gray-500">Available Slots</span>
-                        <span className="text-sm font-bold text-gray-700">{(selectedDoctor.inPersonHours && selectedDoctor.inPersonHours.length > 0) ? `${selectedDoctor.inPersonHours.length} slots` : 'Not Configured'}</span>
+                        <span className="text-xs  text-gray-700">{(selectedDoctor.inPersonHours && selectedDoctor.inPersonHours.length > 0) ? `${selectedDoctor.inPersonHours.length} slots` : 'Not Configured'}</span>
                       </div>
                     </div>
                   </div>
@@ -343,10 +343,10 @@ export const BookingPage = () => {
                 {/* Online Schedule */}
                 {selectedDoctor.onlineConsult && (
                   <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 text-lg"><FaVideo className="text-green-500" /> Online Consultation</h3>
+                    <h3 className=" text-gray-800 mb-4 flex items-center gap-2 text-lg"><FaVideo className="text-green-500" /> Online Consultation</h3>
                     <div className="flex justify-between items-center pb-1">
                       <span className="text-sm font-medium text-gray-500">Available Slots</span>
-                      <span className="text-sm font-bold text-gray-700">{(selectedDoctor.onlineHours && selectedDoctor.onlineHours.length > 0) ? `${selectedDoctor.onlineHours.length} slots` : 'Not Configured'}</span>
+                      <span className="text-xs  text-gray-700">{(selectedDoctor.onlineHours && selectedDoctor.onlineHours.length > 0) ? `${selectedDoctor.onlineHours.length} slots` : 'Not Configured'}</span>
                     </div>
                   </div>
                 )}
@@ -355,7 +355,7 @@ export const BookingPage = () => {
               <div className="mt-8 pt-8 border-t border-gray-200/60">
                 <button
                   onClick={() => navigate(`/${tenant?.slug}/book/${selectedDoctor.id}`)}
-                  className="w-full py-4 rounded-[14px] font-bold text-white shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg flex items-center justify-center gap-2 text-[17px] bg-[var(--color-primary)]"
+                  className="w-full py-4 rounded-[14px]  text-white shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg flex items-center justify-center gap-2 text-[17px] bg-[var(--color-primary)]"
                 >
                   Book an Appointment
                 </button>
