@@ -18,6 +18,7 @@ class DoctorBase(BaseModel):
     in_person_hours: Optional[List[str]] = None
     online_hours: Optional[List[str]] = None
     unavailable_dates: Optional[List[str]] = None
+    fee: float = 0.0
     tenant_id: str
 
 class DoctorCreate(DoctorBase):

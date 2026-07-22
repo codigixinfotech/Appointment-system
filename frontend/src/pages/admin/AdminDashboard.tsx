@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../services/db';
 import type { Tenant } from '../../services/db';
-import { FaPlus, FaHospital, FaExternalLinkAlt, FaUserMd, FaEdit, FaCopy, FaTimes } from 'react-icons/fa';
+import { FaPlus, FaHospital, FaExternalLinkAlt, FaUserMd, FaEdit, FaCopy, FaTimes, FaCalendarAlt } from 'react-icons/fa';
 
 export const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -26,23 +26,31 @@ export const AdminDashboard = () => {
             <h1 className="text-2xl  text-gray-900">SaaS Admin Panel</h1>
             <p className="text-gray-500 mt-1 text-xs">Manage your multi-tenant hospital platform</p>
           </div>
-          <button
-            onClick={() => navigate('/admin/hospitals/new')}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded  text-xs flex items-center gap-2 shadow-md transition-colors"
-          >
-            <FaPlus /> Add New Hospital
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={() => navigate('/admin/appointments')}
+              className="bg-white hover:bg-gray-50 border border-gray-200 text-indigo-600 p-2 rounded text-sm flex items-center gap-2 shadow-sm transition-colors"
+            >
+              <FaCalendarAlt /> Appointments Calendar
+            </button>
+            <button
+              onClick={() => navigate('/admin/hospitals/new')}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded text-sm flex items-center gap-2 shadow-md transition-colors"
+            >
+              <FaPlus /> Add New Hospital
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tenants.map(tenant => (
             <div key={tenant.id} className="bg-white rounded p-4 shadow-sm border border-gray-100 flex flex-col hover:shadow-md transition-shadow">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 rounded-xl border border-gray-100 overflow-hidden flex items-center justify-center bg-gray-50 shrink-0">
+                <div className="w-30 h-16 overflow-hidden flex items-center justify-center bg-gray-50 shrink-0">
                   {tenant.logoUrl ? (
                     <img src={tenant.logoUrl} alt={tenant.brandName} className="w-full h-full object-contain p-2" />
                   ) : (
-                    <FaHospital className="text-2xl text-gray-300" />
+                    <FaHospital className="text-xl text-gray-300" />
                   )}
                 </div>
                 <div>
@@ -93,7 +101,7 @@ export const AdminDashboard = () => {
               <p className="text-gray-500 mb-6 max-w-md">Start building your SaaS platform by adding your first hospital and customizing its branding.</p>
               <button
                 onClick={() => navigate('/admin/hospitals/new')}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-xl  flex items-center gap-2 shadow-md"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded  flex items-center gap-2 shadow-md"
               >
                 <FaPlus /> Create Hospital
               </button>
@@ -129,13 +137,13 @@ export const AdminDashboard = () => {
                   navigator.clipboard.writeText(selectedTenantUrl.url);
                   alert("Copied to clipboard!");
                 }}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 <FaCopy /> Copy
               </button>
               <button
                 onClick={() => window.open(selectedTenantUrl.url, '_blank')}
-                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-2.5 rounded flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 <FaExternalLinkAlt /> Open Link
               </button>

@@ -26,6 +26,8 @@ class Doctor(Base, TimestampMixin, TenantModelMixin):
     in_person_hours = Column(JSON, nullable=True)
     online_hours = Column(JSON, nullable=True)
     unavailable_dates = Column(JSON, nullable=True)
+    
+    fee = Column(Float, default=0.0)
 
     # Relationships
     tenant = relationship("Tenant", back_populates="doctors")

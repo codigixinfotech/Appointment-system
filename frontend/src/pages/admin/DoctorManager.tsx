@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../../services/db';
 import type { Doctor, Tenant } from '../../services/db';
-import { FaArrowLeft, FaPlus, FaTrash, FaUserMd, FaEdit } from 'react-icons/fa';
+import { FaArrowLeft, FaPlus, FaTrash, FaUserMd, FaEdit, FaCalendarAlt } from 'react-icons/fa';
 
 const STANDARD_SLOTS = ['09:00 AM', '10:00 AM', '11:00 AM', '11:30 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM', '05:00 PM', '06:00 PM'];
 
@@ -34,6 +34,7 @@ export const DoctorManager = () => {
     inPersonHours: [],
     onlineHours: [],
     unavailableDates: [],
+    fee: 0,
   });
 
   const resetForm = () => {
@@ -54,6 +55,7 @@ export const DoctorManager = () => {
       inPersonHours: [],
       onlineHours: [],
       unavailableDates: [],
+      fee: 0,
     });
     setEditingDoctorId(null);
     setIsAdding(false);
@@ -128,6 +130,7 @@ export const DoctorManager = () => {
       inPersonHours: formData.inPersonHours || [],
       onlineHours: formData.onlineHours || [],
       unavailableDates: formData.unavailableDates || [],
+      fee: Number(formData.fee) || 0,
     };
 
     if (editingDoctorId) {
@@ -197,6 +200,11 @@ export const DoctorManager = () => {
               <label className="text-xs  text-gray-700">Mobile Number</label>
               <input type="tel" placeholder="+1 234 567 8900" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
             </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs  text-gray-700">Consultation Fee (INR)</label>
+              <input type="number" min="0" placeholder="0 (Leave empty or 0 for free)" value={formData.fee || ''} onChange={e => setFormData({ ...formData, fee: e.target.value === '' ? 0 : Number(e.target.value) })} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none" />
+            </div>
             <div className="flex flex-col gap-2 col-span-full mt-4">
               <label className="text-xs  text-gray-700">In-Person Time Slots</label>
               <div className="flex flex-wrap gap-2">
@@ -241,7 +249,7 @@ export const DoctorManager = () => {
               <label className="text-xs  text-gray-700">Unavailable Dates</label>
 
               {/* Added Range UI */}
-              <div className="flex flex-wrap items-end gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+              <div className="flex flex-wrap items-end gap-4 p-4 bg-gray-50 rounded border border-gray-100">
                 <div className="flex flex-col gap-1">
                   <label className="text-xs  text-gray-500 uppercase">From Date</label>
                   <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} className="px-3 py-1.5 border border-gray-200 rounded-lg outline-none text-sm" />
@@ -292,7 +300,16 @@ export const DoctorManager = () => {
               <img src={doctor.photo} alt={doctor.name} className="w-24 h-24 rounded-full object-cover mb-4 shadow-sm" />
               <h4 className=" text-lg">{doctor.name}</h4>
               <span className="text-sm text-indigo-600 font-semibold bg-indigo-50 px-3 py-1 rounded-full mt-2 mb-4">{doctor.speciality}</span>
-              <p className="text-sm text-gray-500 flex items-center justify-center gap-1 mb-4"><FaUserMd /> {doctor.experience}</p>
+              <p className="text-sm text-gray-500 flex items-center justify-center gap-1 mb-2"><FaUserMd /> {doctor.experience}</p>
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${doctor.fee && doctor.fee > 0 ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                {doctor.fee && doctor.fee > 0 ? `Fee: ₹${doctor.fee}` : 'Free Consultation'}
+              </span>
+              <button
+                onClick={() => navigate(`/admin/appointments?tenant_id=${id}&doctor_id=${doctor.id}`)}
+                className="mt-4 w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-colors border border-indigo-50"
+              >
+                <FaCalendarAlt /> Booked Calendar
+              </button>
             </div>
           ))}
 

@@ -21,6 +21,7 @@ export interface BookingData {
     name: string;
     gender: string;
     age: string;
+    email: string;
     description: string;
   } | null;
 }
@@ -84,7 +85,19 @@ export const BookingWizardPage: React.FC = () => {
       case 2:
         return <Step2_PatientAuth data={bookingData} updateData={updateData} next={nextStep} prev={prevStep} />;
       case 3:
-        return <Step3_ReviewPay data={bookingData} onSuccess={() => setIsSuccess(true)} prev={prevStep} />;
+        return <Step3_ReviewPay data={bookingData} onSuccess={async () => {
+          if (!tenant || !bookingData.doctor || !bookingData.patient) return;
+          await db.createAppointment({
+            tenant_id: tenant.id,
+            doctor_id: bookingData.doctor.id,
+            patient: bookingData.patient,
+            mobile: bookingData.mobile,
+            date: bookingData.date,
+            timeSlot: bookingData.timeSlot,
+            type: bookingData.type || 'Clinic'
+          });
+          setIsSuccess(true);
+        }} prev={prevStep} />;
       default:
         return null;
     }
@@ -116,8 +129,8 @@ export const BookingWizardPage: React.FC = () => {
         </h1>
       </header>
 
-      <main className="flex-1 w-full max-w-6xl mx-auto p-4 md:p-4 flex">
-        <div className="flex flex-col md:flex-row w-full bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden min-h-[600px]">
+      <main className="flex-1 w-full max-w-8xl mx-auto p-4 md:p-4 flex">
+        <div className="flex flex-col md:flex-row w-full bg-white rounded shadow-sm border border-gray-100 overflow-hidden min-h-[600px]">
 
           {/* Left Sidebar: Wizard Steps */}
           {!isSuccess && (
@@ -202,7 +215,7 @@ export const BookingWizardPage: React.FC = () => {
                   </p>
                   <button
                     onClick={handleClose}
-                    className="px-8 py-3 rounded-xl text-white  hover:opacity-90 transition-opacity text-lg"
+                    className="px-8 py-3 rounded text-white  hover:opacity-90 transition-opacity text-lg"
                     style={{ backgroundColor: 'var(--color-primary)' }}
                   >
                     Return to Portal

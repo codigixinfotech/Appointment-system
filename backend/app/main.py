@@ -4,15 +4,29 @@ from app.database.session import engine
 from app.models.base import Base
 
 # Import models so they are registered with Base
-from app.models import tenant, doctor, otp
+from app.models import tenant, doctor, otp, appointment
 
 # Import routers
-from app.api import tenants, doctors, auth
+from app.api import tenants, doctors, auth, appointments
 
 from app.core.config import settings
 
+from sqlalchemy import text
+
 # Auto-migrate database on startup
 Base.metadata.create_all(bind=engine)
+
+# Ensure patient_email column exists in appointments table
+with engine.connect() as conn:
+    try:
+        conn.execute(text("SELECT patient_email FROM appointments LIMIT 1"))
+    except Exception:
+        try:
+            conn.execute(text("ALTER TABLE appointments ADD COLUMN patient_email VARCHAR(255) NULL"))
+            conn.commit()
+            print("Successfully added patient_email column to appointments table.")
+        except Exception as e:
+            print(f"Error adding patient_email column: {e}")
 
 app = FastAPI(title="Appointment Booking System", version="1.0.0")
 
@@ -43,3 +57,4 @@ def read_root():
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 app.include_router(tenants.router, prefix="/api/tenants", tags=["Tenants"])
 app.include_router(doctors.router, prefix="/api/doctors", tags=["Doctors"])
+app.include_router(appointments.router, prefix="/api/appointments", tags=["Appointments"])

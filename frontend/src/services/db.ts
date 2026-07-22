@@ -49,6 +49,25 @@ export interface Doctor {
   inPersonHours?: string[];
   onlineHours?: string[];
   unavailableDates?: string[];
+  fee?: number;
+}
+
+export interface Appointment {
+  id: string;
+  tenant_id: string;
+  doctor_id: string;
+  patient_name: string;
+  patient_mobile: string;
+  patient_age?: string;
+  patient_gender?: string;
+  patient_email?: string;
+  patient_description?: string;
+  date: string;
+  time_slot: string;
+  type: string;
+  status: string;
+  created_at: string;
+  doctor?: Doctor;
 }
 
 export const DEFAULT_THEME: TenantTheme = {
@@ -109,6 +128,7 @@ function mapDoctor(apiDoctor: any): Doctor {
     inPersonHours: apiDoctor.in_person_hours || [],
     onlineHours: apiDoctor.online_hours || [],
     unavailableDates: apiDoctor.unavailable_dates || [],
+    fee: apiDoctor.fee || 0,
   };
 }
 
@@ -220,6 +240,7 @@ class ApiDB {
       in_person_hours: doctor.inPersonHours,
       online_hours: doctor.onlineHours,
       unavailable_dates: doctor.unavailableDates,
+      fee: doctor.fee || 0,
     };
     
     const response = await fetch(`${API_BASE}/doctors/`, {
@@ -257,6 +278,7 @@ class ApiDB {
     if (updates.inPersonHours !== undefined) backendPayload.in_person_hours = updates.inPersonHours;
     if (updates.onlineHours !== undefined) backendPayload.online_hours = updates.onlineHours;
     if (updates.unavailableDates !== undefined) backendPayload.unavailable_dates = updates.unavailableDates;
+    if (updates.fee !== undefined) backendPayload.fee = updates.fee;
 
     const response = await fetch(`${API_BASE}/doctors/${id}`, {
       method: 'PUT',
@@ -273,6 +295,32 @@ class ApiDB {
       method: 'DELETE',
     });
     return response.ok;
+  }
+
+  // --- Appointments ---
+
+  async createAppointment(appointmentData: any): Promise<Appointment> {
+    const response = await fetch(`${API_BASE}/appointments/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(appointmentData),
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || 'Failed to create appointment');
+    }
+    return await response.json();
+  }
+
+  async getAppointments(tenantId: string, doctorId?: string, date?: string): Promise<Appointment[]> {
+    const params = new URLSearchParams();
+    if (doctorId) params.append('doctor_id', doctorId);
+    if (date) params.append('date', date);
+    
+    const query = params.toString() ? `?${params.toString()}` : '';
+    const response = await fetch(`${API_BASE}/appointments/${tenantId}${query}`);
+    if (!response.ok) throw new Error('Failed to fetch appointments');
+    return await response.json();
   }
 
   // --- Auth & OTP ---

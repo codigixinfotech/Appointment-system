@@ -123,7 +123,7 @@ export const HospitalForm = () => {
 
               <div className="flex flex-col gap-2">
                 <label className="text-xs  text-gray-700">URL Slug (Subdomain / Path)</label>
-                <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500">
+                <div className="flex items-center border border-gray-200 rounded overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500">
                   <span className="bg-gray-50 p-2 text-gray-500 text-sm font-medium border-r border-gray-200">
                     /hospitals/
                   </span>
@@ -242,7 +242,7 @@ export const HospitalForm = () => {
                 <FaPlus /> Add Row
               </button>
             </div>
-            
+
             <div className="flex flex-col gap-3">
               {workingHours.map((wh, index) => (
                 <div key={index} className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-100">

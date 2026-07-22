@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../theme/ThemeProvider';
-import { motion } from 'framer-motion';
-import { FaUserMd, FaMapMarkerAlt, FaVideo, FaClock, FaStar, FaHeart, FaCommentDots, FaUser, FaCheckCircle, FaSearch, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaUserMd, FaMapMarkerAlt, FaVideo, FaClock, FaStar, FaHeart, FaCommentDots, FaUser, FaCheckCircle, FaSearch, FaPhoneAlt, FaEnvelope, FaTimes, FaChevronLeft, FaChevronRight, FaCalendarAlt } from 'react-icons/fa';
 import { Modal } from '../components/Modal';
 import { db } from '../services/db';
 import { fetchGoogleReviews, type GooglePlaceResult } from '../services/googlePlaces';
@@ -13,6 +13,11 @@ export const BookingPage = () => {
   const navigate = useNavigate();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
+  const [calendarDoctor, setCalendarDoctor] = useState<Doctor | null>(null);
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [selectedCalDateStr, setSelectedCalDateStr] = useState<string>('');
+  const [doctorAppointments, setDoctorAppointments] = useState<any[]>([]);
+  const [loadingAppts, setLoadingAppts] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [googlePlaceData, setGooglePlaceData] = useState<GooglePlaceResult | null>(null);
 
@@ -25,10 +30,41 @@ export const BookingPage = () => {
     }
   }, [tenant]);
 
+  useEffect(() => {
+    if (tenant && calendarDoctor) {
+      setLoadingAppts(true);
+      
+      const today = new Date();
+      setSelectedCalDateStr(`${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`);
+
+      db.getAppointments(tenant.id, calendarDoctor.id)
+        .then(setDoctorAppointments)
+        .catch(err => {
+          console.error("Failed to fetch doctor appointments", err);
+          setDoctorAppointments([]);
+        })
+        .finally(() => setLoadingAppts(false));
+    } else {
+      setDoctorAppointments([]);
+    }
+  }, [tenant, calendarDoctor]);
+
   const filteredDoctors = doctors.filter(doc =>
     doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     doc.speciality.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const calYear = calendarDate.getFullYear();
+  const calMonth = calendarDate.getMonth();
+  const calDaysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const calFirstDay = new Date(calYear, calMonth, 1).getDay();
+
+  const prevCalMonth = () => setCalendarDate(new Date(calYear, calMonth - 1, 1));
+  const nextCalMonth = () => setCalendarDate(new Date(calYear, calMonth + 1, 1));
+
+  const getCalDateString = (day: number) => {
+    return `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  };
 
   if (!theme) return null;
 
@@ -124,6 +160,10 @@ export const BookingPage = () => {
                     <span className="flex items-center gap-1"><FaClock /> {doctor.experience}</span>
                     <span className="w-1 h-1 rounded-full bg-[var(--color-primary)] opacity-30"></span>
                     <span className="flex items-center gap-1"><FaUserMd /> {doctor.education.split(',')[0]}</span>
+                    <span className="w-1 h-1 rounded-full bg-[var(--color-primary)] opacity-30"></span>
+                    <span className={`px-2 py-0.5 rounded-full font-semibold ${doctor.fee && doctor.fee > 0 ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                      {doctor.fee && doctor.fee > 0 ? `₹${doctor.fee}` : 'Free'}
+                    </span>
                   </div>
                 </div>
 
@@ -131,13 +171,22 @@ export const BookingPage = () => {
                 <div className="w-full sm:w-48 flex flex-row sm:flex-col border-t sm:border-t-0 sm:border-l border-gray-100 shrink-0 bg-gray-50/50">
                   <button
                     onClick={() => setSelectedDoctor(doctor)}
-                    className="flex-1 py-4 sm:py-0 text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors border-r sm:border-r-0 sm:border-b border-gray-100 flex items-center justify-center h-full"
+                    className="flex-1 py-3 sm:py-0 text-xs font-semibold text-gray-600 hover:bg-gray-100 transition-colors border-r sm:border-r-0 sm:border-b border-gray-100 flex items-center justify-center"
                   >
                     View Profile
                   </button>
                   <button
+                    onClick={() => {
+                      setCalendarDoctor(doctor);
+                      setCalendarDate(new Date());
+                    }}
+                    className="flex-1 py-3 sm:py-0 text-xs font-semibold text-indigo-600 hover:bg-gray-100 transition-colors border-r sm:border-r-0 sm:border-b border-gray-100 flex items-center justify-center"
+                  >
+                    Booked Calendar
+                  </button>
+                  <button
                     onClick={() => navigate(`/${tenant?.slug}/book/${doctor.id}`)}
-                    className="flex-1 py-4 sm:py-0 text-sm  hover:bg-gray-100 transition-colors flex items-center justify-center h-full bg-white sm:bg-transparent"
+                    className="flex-1 py-3 sm:py-0 text-xs font-semibold hover:bg-gray-100 transition-colors flex items-center justify-center bg-white sm:bg-transparent"
                     style={{ color: 'var(--color-primary)' }}
                   >
                     Book Appointment
@@ -194,7 +243,7 @@ export const BookingPage = () => {
                 <div className="mt-8 pt-6 border-t border-gray-100">
                   <h4 className="text-xs  text-gray-400 uppercase tracking-wider mb-4">Working Hours</h4>
                   {tenant.workingHours.map((wh, idx) => (
-                    <div key={idx} className={`flex justify-between items-center p-3 rounded-xl mb-2 ${wh.isEmergency ? 'bg-red-50 border border-red-100' : 'bg-gray-50'}`}>
+                    <div key={idx} className={`flex justify-between items-center p-3 rounded mb-2 ${wh.isEmergency ? 'bg-red-50 border border-red-100' : 'bg-gray-50'}`}>
                       <span className={`text-sm font-medium ${wh.isEmergency ? 'text-red-600 ' : 'text-gray-500'}`}>{wh.label}</span>
                       <span className={`text-sm  flex items-center gap-1 ${wh.isEmergency ? 'text-red-600' : 'text-gray-800'}`}>
                         {wh.isEmergency && <FaPhoneAlt className="text-xs" />} {wh.time}
@@ -209,16 +258,35 @@ export const BookingPage = () => {
             {tenant?.mapEmbedUrl && (
               <div className="w-full h-[250px] relative mt-2 border-t border-gray-100 p-2 bg-gray-50">
                 <div className="w-full h-full rounded overflow-hidden shadow-sm border border-gray-200">
-                  <iframe
-                    src={tenant.mapEmbedUrl}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0, filter: 'contrast(1.1) brightness(0.95)' }}
-                    allowFullScreen={false}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Hospital Map"
-                  ></iframe>
+                  {tenant.mapEmbedUrl.includes('maps/embed') || tenant.mapEmbedUrl.includes('google.com/maps/d/embed') ? (
+                    <iframe
+                      src={tenant.mapEmbedUrl}
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0, filter: 'contrast(1.1) brightness(0.95)' }}
+                      allowFullScreen={false}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title="Hospital Map"
+                    ></iframe>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-4 bg-white text-center">
+                      <FaMapMarkerAlt className="text-3xl text-red-500 mb-2" />
+                      <h5 className="font-semibold text-gray-700 text-sm mb-1">Hospital Location</h5>
+                      <p className="text-xs text-gray-500 mb-4 max-w-[220px] truncate-3-lines">
+                        {tenant.address || 'Click below to view the location on Google Maps.'}
+                      </p>
+                      <a
+                        href={tenant.mapEmbedUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 text-white rounded text-xs font-semibold transition hover:opacity-90"
+                        style={{ backgroundColor: theme.primaryColor }}
+                      >
+                        Open in Google Maps
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -284,6 +352,15 @@ export const BookingPage = () => {
                     </div>
                   </div>
                 )}
+
+                <div className="mt-8">
+                  <h3 className=" text-gray-800 mb-3 text-lg">Consultation</h3>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <span className={`px-2.5 py-1 rounded-full font-semibold text-xs ${selectedDoctor.fee && selectedDoctor.fee > 0 ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                      {selectedDoctor.fee && selectedDoctor.fee > 0 ? `Consultation Fee: ₹${selectedDoctor.fee}` : 'Free Consultation'}
+                    </span>
+                  </div>
+                </div>
 
                 <h3 className=" text-gray-800 mt-8 mb-3 text-lg">About</h3>
                 <p className="text-sm text-gray-500 leading-relaxed font-medium">{selectedDoctor.bio}</p>
@@ -363,7 +440,193 @@ export const BookingPage = () => {
             </div>
           </div>
         )}
-      </Modal>
+      </Modal>      {/* Booked Calendar Modal */}
+      <AnimatePresence>
+        {calendarDoctor && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setCalendarDoctor(null)}
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            />
+
+            {/* Modal Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col z-10 max-h-[90vh]"
+            >
+              {/* Header: Dynamic Theme-colored Gradient Banner */}
+              <div 
+                className="relative overflow-hidden p-5 flex justify-between items-center text-white select-none shrink-0"
+                style={{ background: `linear-gradient(135deg, ${theme.primaryColor} 0%, ${theme.primaryColor}dd 100%)` }}
+              >
+                {/* Decorative design graphic */}
+                <div className="absolute right-0 top-0 w-36 h-36 bg-white/5 rounded-full -translate-y-8 translate-x-8 blur-xl pointer-events-none"></div>
+                
+                <div className="flex items-center gap-3 relative z-10">
+                  <div className="w-12 h-12 rounded-xl border-2 border-white/20 overflow-hidden shadow-md shrink-0 bg-white">
+                    <img src={calendarDoctor.photo} alt={calendarDoctor.name} className="w-full h-full object-cover object-top" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold tracking-tight text-white flex items-center gap-1.5">
+                      <FaCalendarAlt className="text-white/80 text-base" /> Booked Appointments
+                    </h3>
+                    <p className="text-[11px] text-white/85 mt-0.5 font-medium">
+                      Dr. {calendarDoctor.name} • <span className="text-white">{calendarDoctor.speciality}</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={() => setCalendarDoctor(null)}
+                  className="w-9 h-9 rounded-xl flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-all shadow-sm active:scale-95 z-10"
+                >
+                  <FaTimes className="text-sm" />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-5 flex-1 flex flex-col overflow-y-auto">
+                {loadingAppts ? (
+                  <div className="h-80 flex flex-col items-center justify-center text-gray-400 font-semibold gap-3">
+                    <div className="animate-spin rounded-full h-7 w-7 border-3 border-[var(--color-primary)] border-t-transparent"></div>
+                    <span className="text-xs font-medium">Retrieving schedule...</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col md:flex-row gap-5 flex-1">
+                    
+                    {/* Left Column: Compact Datepicker Calendar */}
+                    <div className="w-full md:w-[270px] shrink-0 border border-gray-150 rounded-2xl p-3.5 bg-gray-50/50 shadow-sm flex flex-col gap-2.5">
+                      {/* Navigation */}
+                      <div className="flex justify-between items-center bg-white border border-gray-150 px-2.5 py-1.5 rounded-lg shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
+                        <span className="font-bold text-gray-700 text-xs">
+                          {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][calendarDate.getMonth()]} {calendarDate.getFullYear()}
+                        </span>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={prevCalMonth}
+                            className="w-6.5 h-6.5 rounded-md bg-white hover:bg-gray-50 text-gray-500 flex items-center justify-center shadow-sm border border-gray-200 transition active:scale-95"
+                          >
+                            <FaChevronLeft className="text-[8px]" />
+                          </button>
+                          <button
+                            onClick={nextCalMonth}
+                            className="w-6.5 h-6.5 rounded-md bg-white hover:bg-gray-50 text-gray-500 flex items-center justify-center shadow-sm border border-gray-255 transition active:scale-95"
+                          >
+                            <FaChevronRight className="text-[8px]" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Grid */}
+                      <div className="grid grid-cols-7 gap-y-1 text-center">
+                        {["S", "M", "T", "W", "T", "F", "S"].map((day, idx) => (
+                          <div key={idx} className="text-[9px] font-bold text-gray-400 uppercase py-0.5">
+                            {day}
+                          </div>
+                        ))}
+
+                        {(() => {
+                          const cells = [];
+                          for (let i = 0; i < calFirstDay; i++) {
+                            cells.push(<div key={`empty-${i}`} className="h-7 w-7" />);
+                          }
+                          for (let day = 1; day <= calDaysInMonth; day++) {
+                            const dateStr = getCalDateString(day);
+                            const dayBookings = doctorAppointments.filter(a => a.date === dateStr);
+                            const isToday = new Date().toDateString() === new Date(calYear, calMonth, day).toDateString();
+                            const isSelected = selectedCalDateStr === dateStr;
+                            
+                            cells.push(
+                              <button
+                                key={`day-${day}`}
+                                type="button"
+                                onClick={() => setSelectedCalDateStr(dateStr)}
+                                className={`h-7 w-7 rounded-full flex flex-col items-center justify-center relative transition-all mx-auto text-xs font-semibold ${
+                                  isSelected 
+                                    ? 'bg-indigo-600 text-white shadow-md font-bold' 
+                                    : isToday 
+                                      ? 'bg-indigo-50 text-indigo-600 border border-indigo-200' 
+                                      : 'text-gray-700 hover:bg-gray-150'
+                                }`}
+                              >
+                                <span>{day}</span>
+                                {dayBookings.length > 0 && !isSelected && (
+                                  <span className="absolute bottom-0.5 w-1 h-1 rounded-full bg-red-500"></span>
+                                )}
+                              </button>
+                            );
+                          }
+                          return cells;
+                        })()}
+                      </div>
+                    </div>
+
+                    {/* Right Column: Booked Slots Details Panel */}
+                    <div className="flex-1 flex flex-col gap-3.5 border border-gray-150 rounded-2xl p-4 bg-white shadow-sm min-h-[220px]">
+                      <div className="border-b border-gray-100 pb-1.5 shrink-0">
+                        <h4 className="font-bold text-gray-800 text-xs uppercase tracking-wider">Booked Slots</h4>
+                        <p className="text-[10px] text-gray-400 font-semibold mt-0.5">
+                          {selectedCalDateStr ? new Date(selectedCalDateStr).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' }) : 'No date selected'}
+                        </p>
+                      </div>
+
+                      <div className="flex-1 overflow-y-auto max-h-[190px] pr-1 flex flex-col gap-1.5">
+                        {(() => {
+                          const dayBookings = doctorAppointments.filter(a => a.date === selectedCalDateStr);
+                          if (dayBookings.length === 0) {
+                            return (
+                              <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-gray-400 my-auto">
+                                <FaCheckCircle className="text-2xl text-emerald-500 mb-2 opacity-80" />
+                                <span className="text-xs font-bold text-gray-600">All slots available</span>
+                                <span className="text-[9px] text-gray-400 mt-0.5">No booked appointments for this date.</span>
+                              </div>
+                            );
+                          }
+
+                          return dayBookings.map(b => (
+                            <div
+                              key={b.id}
+                              className="flex items-center gap-2.5 p-2 bg-red-50/50 hover:bg-red-50 border border-red-100/50 rounded-xl transition-colors shrink-0"
+                            >
+                              <div className="w-7 h-7 rounded-lg bg-red-100/70 text-red-600 flex items-center justify-center shrink-0">
+                                  <FaClock className="text-xs" />
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="text-xs font-bold text-gray-800 leading-none mb-0.5">{b.time_slot}</span>
+                                <span className="text-[9px] text-gray-400 font-semibold">{b.type === 'Online' ? 'Video Consult' : 'Clinic Visit'}</span>
+                              </div>
+                              <span className="ml-auto text-[9px] bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded-full border border-red-200/20">
+                                Booked
+                              </span>
+                            </div>
+                          ));
+                        })()}
+                      </div>
+                    </div>
+
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="flex justify-end border-t border-gray-100 p-4 bg-gray-50 shrink-0">
+                <button
+                  onClick={() => setCalendarDoctor(null)}
+                  className="px-5 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 rounded-xl text-xs font-semibold shadow-sm transition active:scale-95"
+                >
+                  Close Calendar
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

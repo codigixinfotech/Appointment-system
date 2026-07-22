@@ -5,6 +5,7 @@ import { BookingWizardPage } from './pages/BookingWizardPage';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { HospitalForm } from './pages/admin/HospitalForm';
 import { DoctorManager } from './pages/admin/DoctorManager';
+import { AppointmentsCalendar } from './pages/admin/AppointmentsCalendar';
 import './index.css';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/admin/hospitals/new" element={<HospitalForm />} />
         <Route path="/admin/hospitals/:id/edit" element={<HospitalForm />} />
         <Route path="/admin/hospitals/:id/doctors" element={<DoctorManager />} />
+        <Route path="/admin/appointments" element={<AppointmentsCalendar />} />
 
         {/* Dynamic Tenant Routes */}
         <Route path="/:hospitalSlug" element={
