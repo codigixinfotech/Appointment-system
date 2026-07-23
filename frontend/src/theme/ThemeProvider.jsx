@@ -1,22 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../services/db';
-import type { Tenant } from '../services/db';
 import { tenants } from './tenants';
-
-interface ThemeContextType {
-  theme: any | null; // We'll adapt to either local or static
-  tenant: Tenant | null;
-}
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { hospitalSlug } = useParams<{ hospitalSlug?: string }>();
+const ThemeContext = createContext(undefined);
+export const ThemeProvider = ({
+  children
+}) => {
+  const {
+    hospitalSlug
+  } = useParams();
   const navigate = useNavigate();
-  const [tenant, setTenant] = useState<Tenant | null>(null);
+  const [tenant, setTenant] = useState(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchTenant = async () => {
       setLoading(true);
@@ -24,22 +19,18 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (hospitalSlug) {
         foundTenant = await db.getTenantBySlug(hospitalSlug);
       }
-      
       if (!foundTenant && hospitalSlug) {
         // If not found in DB, we could redirect to admin or 404
         navigate('/admin');
         return;
       }
-      
       setTenant(foundTenant);
       setLoading(false);
     };
     fetchTenant();
   }, [hospitalSlug, navigate]);
-
   useEffect(() => {
     if (!tenant) return;
-
     const root = document.documentElement;
     root.style.setProperty('--color-primary', tenant.theme.primaryColor);
     root.style.setProperty('--color-secondary', tenant.theme.secondaryColor);
@@ -48,23 +39,20 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     root.style.setProperty('--color-surface', tenant.theme.surfaceColor);
     root.style.setProperty('--color-text-main', tenant.theme.textColor);
     root.style.setProperty('--color-text-sub', tenant.theme.subtextColor);
-    
+
     // Set document title dynamically
     document.title = `${tenant.name} - Booking`;
-    
   }, [tenant]);
-
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-500">Loading Portal...</div>;
   }
-
-  return (
-    <ThemeContext.Provider value={{ theme: tenant?.theme || tenants['default'], tenant }}>
+  return <ThemeContext.Provider value={{
+    theme: tenant?.theme || tenants['default'],
+    tenant
+  }}>
       {children}
-    </ThemeContext.Provider>
-  );
+    </ThemeContext.Provider>;
 };
-
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (context === undefined) {

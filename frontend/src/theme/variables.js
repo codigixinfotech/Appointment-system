@@ -7,5 +7,5 @@ export const defaultTheme = {
   borderColor: '#e5e7eb',
   textColor: '#1f2937',
   fontFamily: 'Inter, sans-serif',
-  borderRadius: '0.5rem',
+  borderRadius: '0.5rem'
 };

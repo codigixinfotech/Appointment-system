@@ -1,88 +1,14 @@
-export interface TenantTheme {
-  primaryColor: string;
-  secondaryColor: string;
-  accentColor: string;
-  backgroundColor: string;
-  surfaceColor: string;
-  textColor: string;
-  subtextColor: string;
-}
-
-export interface WorkingHour {
-  label: string;
-  time: string;
-  isEmergency?: boolean;
-}
-
-export interface Tenant {
-  id: string;
-  slug: string;
-  name: string;
-  brandName: string;
-  logoUrl: string;
-  theme: TenantTheme;
-  address?: string;
-  phone?: string;
-  emergencyPhone?: string;
-  workingHours?: WorkingHour[];
-  mapEmbedUrl?: string;
-  upiId?: string;
-  googlePlaceId?: string;
-}
-
-export interface Doctor {
-  id: string;
-  tenantId: string;
-  name: string;
-  speciality: string;
-  experience: string;
-  address: string;
-  onlineConsult: boolean;
-  inPerson: boolean;
-  education: string;
-  languages: string[];
-  rating: number;
-  bio: string;
-  photo: string;
-  email?: string;
-  phone?: string;
-  inPersonHours?: string[];
-  onlineHours?: string[];
-  unavailableDates?: string[];
-  fee?: number;
-}
-
-export interface Appointment {
-  id: string;
-  tenant_id: string;
-  doctor_id: string;
-  patient_name: string;
-  patient_mobile: string;
-  patient_age?: string;
-  patient_gender?: string;
-  patient_email?: string;
-  patient_description?: string;
-  date: string;
-  time_slot: string;
-  type: string;
-  status: string;
-  created_at: string;
-  doctor?: Doctor;
-}
-
-export const DEFAULT_THEME: TenantTheme = {
+export const DEFAULT_THEME = {
   primaryColor: '#883b4b',
   secondaryColor: '#db2777',
   accentColor: '#f59e0b',
   backgroundColor: '#fdfbfb',
   surfaceColor: '#ffffff',
   textColor: '#1f2937',
-  subtextColor: '#6b7280',
+  subtextColor: '#6b7280'
 };
-
 const API_BASE = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8000/api`;
-
-function mapTenant(apiTenant: any): Tenant {
+function mapTenant(apiTenant) {
   return {
     id: apiTenant.id,
     name: apiTenant.name,
@@ -103,12 +29,11 @@ function mapTenant(apiTenant: any): Tenant {
       backgroundColor: apiTenant.background_color || '#fdfbfb',
       surfaceColor: apiTenant.surface_color || '#ffffff',
       textColor: apiTenant.text_color || '#1f2937',
-      subtextColor: apiTenant.subtext_color || '#6b7280',
+      subtextColor: apiTenant.subtext_color || '#6b7280'
     }
   };
 }
-
-function mapDoctor(apiDoctor: any): Doctor {
+function mapDoctor(apiDoctor) {
   return {
     id: apiDoctor.id,
     tenantId: apiDoctor.tenant_id,
@@ -128,14 +53,13 @@ function mapDoctor(apiDoctor: any): Doctor {
     inPersonHours: apiDoctor.in_person_hours || [],
     onlineHours: apiDoctor.online_hours || [],
     unavailableDates: apiDoctor.unavailable_dates || [],
-    fee: apiDoctor.fee || 0,
+    fee: apiDoctor.fee || 0
   };
 }
-
 class ApiDB {
   // --- Tenants (Hospitals) ---
 
-  async createTenant(tenant: Omit<Tenant, 'id'>): Promise<Tenant> {
+  async createTenant(tenant) {
     const backendPayload = {
       name: tenant.name,
       brand_name: tenant.brandName,
@@ -154,39 +78,36 @@ class ApiDB {
       background_color: tenant.theme.backgroundColor,
       surface_color: tenant.theme.surfaceColor,
       text_color: tenant.theme.textColor,
-      subtext_color: tenant.theme.subtextColor,
+      subtext_color: tenant.theme.subtextColor
     };
-    
     const response = await fetch(`${API_BASE}/tenants/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(backendPayload),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(backendPayload)
     });
     if (!response.ok) throw new Error('Failed to create tenant');
     return mapTenant(await response.json());
   }
-
-  async getAllTenants(): Promise<Tenant[]> {
+  async getAllTenants() {
     const response = await fetch(`${API_BASE}/tenants/`);
     if (!response.ok) throw new Error('Failed to fetch tenants');
     const data = await response.json();
     return data.map(mapTenant);
   }
-
-  async getTenantBySlug(slug: string): Promise<Tenant | null> {
+  async getTenantBySlug(slug) {
     const tenants = await this.getAllTenants();
     return tenants.find(t => t.slug === slug) || null;
   }
-
-  async getTenantById(id: string): Promise<Tenant | null> {
+  async getTenantById(id) {
     const response = await fetch(`${API_BASE}/tenants/${id}`);
     if (response.status === 404) return null;
     if (!response.ok) throw new Error('Failed to fetch tenant');
     return mapTenant(await response.json());
   }
-
-  async updateTenant(id: string, updates: Partial<Tenant>): Promise<Tenant | null> {
-    const backendPayload: any = {};
+  async updateTenant(id, updates) {
+    const backendPayload = {};
     if (updates.name !== undefined) backendPayload.name = updates.name;
     if (updates.brandName !== undefined) backendPayload.brand_name = updates.brandName;
     if (updates.slug !== undefined) backendPayload.slug = updates.slug;
@@ -198,7 +119,6 @@ class ApiDB {
     if (updates.mapEmbedUrl !== undefined) backendPayload.map_embed_url = updates.mapEmbedUrl;
     if (updates.upiId !== undefined) backendPayload.upi_id = updates.upiId;
     if (updates.googlePlaceId !== undefined) backendPayload.google_place_id = updates.googlePlaceId;
-    
     if (updates.theme) {
       if (updates.theme.primaryColor !== undefined) backendPayload.primary_color = updates.theme.primaryColor;
       if (updates.theme.secondaryColor !== undefined) backendPayload.secondary_color = updates.theme.secondaryColor;
@@ -208,11 +128,12 @@ class ApiDB {
       if (updates.theme.textColor !== undefined) backendPayload.text_color = updates.theme.textColor;
       if (updates.theme.subtextColor !== undefined) backendPayload.subtext_color = updates.theme.subtextColor;
     }
-
     const response = await fetch(`${API_BASE}/tenants/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(backendPayload),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(backendPayload)
     });
     if (response.status === 404) return null;
     if (!response.ok) throw new Error('Failed to update tenant');
@@ -221,7 +142,7 @@ class ApiDB {
 
   // --- Doctors ---
 
-  async createDoctor(doctor: Omit<Doctor, 'id'>): Promise<Doctor> {
+  async createDoctor(doctor) {
     const backendPayload = {
       tenant_id: doctor.tenantId,
       name: doctor.name,
@@ -240,27 +161,26 @@ class ApiDB {
       in_person_hours: doctor.inPersonHours,
       online_hours: doctor.onlineHours,
       unavailable_dates: doctor.unavailableDates,
-      fee: doctor.fee || 0,
+      fee: doctor.fee || 0
     };
-    
     const response = await fetch(`${API_BASE}/doctors/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(backendPayload),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(backendPayload)
     });
     if (!response.ok) throw new Error('Failed to create doctor');
     return mapDoctor(await response.json());
   }
-
-  async getDoctorsByTenant(tenantId: string): Promise<Doctor[]> {
+  async getDoctorsByTenant(tenantId) {
     const response = await fetch(`${API_BASE}/doctors/tenant/${tenantId}`);
     if (!response.ok) throw new Error('Failed to fetch doctors');
     const data = await response.json();
     return data.map(mapDoctor);
   }
-
-  async updateDoctor(id: string, updates: Partial<Doctor>): Promise<Doctor | null> {
-    const backendPayload: any = {};
+  async updateDoctor(id, updates) {
+    const backendPayload = {};
     if (updates.tenantId !== undefined) backendPayload.tenant_id = updates.tenantId;
     if (updates.name !== undefined) backendPayload.name = updates.name;
     if (updates.speciality !== undefined) backendPayload.speciality = updates.speciality;
@@ -279,31 +199,33 @@ class ApiDB {
     if (updates.onlineHours !== undefined) backendPayload.online_hours = updates.onlineHours;
     if (updates.unavailableDates !== undefined) backendPayload.unavailable_dates = updates.unavailableDates;
     if (updates.fee !== undefined) backendPayload.fee = updates.fee;
-
     const response = await fetch(`${API_BASE}/doctors/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(backendPayload),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(backendPayload)
     });
     if (response.status === 404) return null;
     if (!response.ok) throw new Error('Failed to update doctor');
     return mapDoctor(await response.json());
   }
-
-  async deleteDoctor(id: string): Promise<boolean> {
+  async deleteDoctor(id) {
     const response = await fetch(`${API_BASE}/doctors/${id}`, {
-      method: 'DELETE',
+      method: 'DELETE'
     });
     return response.ok;
   }
 
   // --- Appointments ---
 
-  async createAppointment(appointmentData: any): Promise<Appointment> {
+  async createAppointment(appointmentData) {
     const response = await fetch(`${API_BASE}/appointments/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(appointmentData),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(appointmentData)
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -311,12 +233,10 @@ class ApiDB {
     }
     return await response.json();
   }
-
-  async getAppointments(tenantId: string, doctorId?: string, date?: string): Promise<Appointment[]> {
+  async getAppointments(tenantId, doctorId, date) {
     const params = new URLSearchParams();
     if (doctorId) params.append('doctor_id', doctorId);
     if (date) params.append('date', date);
-    
     const query = params.toString() ? `?${params.toString()}` : '';
     const response = await fetch(`${API_BASE}/appointments/${tenantId}${query}`);
     if (!response.ok) throw new Error('Failed to fetch appointments');
@@ -325,26 +245,35 @@ class ApiDB {
 
   // --- Auth & OTP ---
 
-  async sendOtp(mobile: string): Promise<{ success: boolean; debugOtp?: string }> {
+  async sendOtp(mobile) {
     const response = await fetch(`${API_BASE}/auth/send-otp`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mobile }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        mobile
+      })
     });
-    
     if (!response.ok) {
-        throw new Error('Failed to send OTP');
+      throw new Error('Failed to send OTP');
     }
-    
     const data = await response.json();
-    return { success: true, debugOtp: data.debug_otp };
+    return {
+      success: true,
+      debugOtp: data.debug_otp
+    };
   }
-
-  async verifyOtp(mobile: string, otpCode: string): Promise<boolean> {
+  async verifyOtp(mobile, otpCode) {
     const response = await fetch(`${API_BASE}/auth/verify-otp`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mobile, otp_code: otpCode }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        mobile,
+        otp_code: otpCode
+      })
     });
     if (!response.ok) {
       const errorData = await response.json();
@@ -354,5 +283,4 @@ class ApiDB {
     return data.verified === true;
   }
 }
-
 export const db = new ApiDB();

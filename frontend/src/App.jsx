@@ -7,10 +7,8 @@ import { HospitalForm } from './pages/admin/HospitalForm';
 import { DoctorManager } from './pages/admin/DoctorManager';
 import { AppointmentsCalendar } from './pages/admin/AppointmentsCalendar';
 import './index.css';
-
 function App() {
-  return (
-    <Router>
+  return <Router>
       <Routes>
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminDashboard />} />
@@ -20,22 +18,16 @@ function App() {
         <Route path="/admin/appointments" element={<AppointmentsCalendar />} />
 
         {/* Dynamic Tenant Routes */}
-        <Route path="/:hospitalSlug" element={
-          <ThemeProvider>
+        <Route path="/:hospitalSlug" element={<ThemeProvider>
             <BookingPage />
-          </ThemeProvider>
-        } />
-        <Route path="/:hospitalSlug/book/:doctorId" element={
-          <ThemeProvider>
+          </ThemeProvider>} />
+        <Route path="/:hospitalSlug/book/:doctorId" element={<ThemeProvider>
             <BookingWizardPage />
-          </ThemeProvider>
-        } />
+          </ThemeProvider>} />
 
         {/* Default Redirect */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Routes>
-    </Router>
-  );
+    </Router>;
 }
-
 export default App;

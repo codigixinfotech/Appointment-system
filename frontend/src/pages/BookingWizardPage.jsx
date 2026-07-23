@@ -4,54 +4,41 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaCheckCircle, FaArrowLeft } from 'react-icons/fa';
 import { useTheme } from '../theme/ThemeProvider';
 import { db } from '../services/db';
-import type { Doctor } from '../services/db';
-
 // Step Imports
 import { Step1_SelectSlot } from '../components/booking/steps/Step1_SelectSlot';
 import { Step2_PatientAuth } from '../components/booking/steps/Step2_PatientAuth';
 import { Step3_ReviewPay } from '../components/booking/steps/Step3_ReviewPay';
-
-export interface BookingData {
-  doctor: Doctor | null;
-  date: string | null;
-  timeSlot: string | null;
-  type: 'In-Person' | 'Online' | null;
-  mobile: string;
-  patient: {
-    name: string;
-    gender: string;
-    age: string;
-    email: string;
-    description: string;
-  } | null;
-}
-
-export const BookingWizardPage: React.FC = () => {
-  const { doctorId } = useParams();
+export const BookingWizardPage = () => {
+  const {
+    doctorId
+  } = useParams();
   const navigate = useNavigate();
-  const { theme, tenant } = useTheme();
-
-  const [doctor, setDoctor] = useState<Doctor | null>(null);
+  const {
+    theme,
+    tenant
+  } = useTheme();
+  const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [step, setStep] = useState<number>(1);
-  const [bookingData, setBookingData] = useState<BookingData>({
+  const [step, setStep] = useState(1);
+  const [bookingData, setBookingData] = useState({
     doctor: null,
     date: null,
     timeSlot: null,
     type: null,
     mobile: '',
-    patient: null,
+    patient: null
   });
-
   const [isSuccess, setIsSuccess] = useState(false);
-
   useEffect(() => {
     const fetchDoctor = async () => {
       if (tenant && doctorId) {
         const docs = await db.getDoctorsByTenant(tenant.id);
         const doc = docs.find(d => d.id === doctorId) || null;
         setDoctor(doc);
-        setBookingData(prev => ({ ...prev, doctor: doc }));
+        setBookingData(prev => ({
+          ...prev,
+          doctor: doc
+        }));
       }
       setLoading(false);
     };
@@ -64,20 +51,18 @@ export const BookingWizardPage: React.FC = () => {
       navigate(`/${tenant?.slug || ''}`);
     }
   }, [doctor, loading, navigate, tenant]);
-
   if (loading || !doctor || !theme) return <div className="min-h-screen bg-gray-50"></div>;
-
-  const nextStep = () => setStep((s) => Math.min(s + 1, 3));
-  const prevStep = () => setStep((s) => Math.max(s - 1, 1));
-
-  const updateData = (newData: Partial<BookingData>) => {
-    setBookingData((prev) => ({ ...prev, ...newData }));
+  const nextStep = () => setStep(s => Math.min(s + 1, 3));
+  const prevStep = () => setStep(s => Math.max(s - 1, 1));
+  const updateData = newData => {
+    setBookingData(prev => ({
+      ...prev,
+      ...newData
+    }));
   };
-
   const handleClose = () => {
     navigate('/');
   };
-
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -102,28 +87,28 @@ export const BookingWizardPage: React.FC = () => {
         return null;
     }
   };
-
-  const WIZARD_STEPS = [
-    { id: 1, title: 'Select Slot', subtitle: bookingData.timeSlot ? 'Completed' : 'Choose date & time' },
-    { id: 2, title: 'Patient Info & Auth', subtitle: step > 2 ? 'Completed' : 'Enter details & verify' },
-    { id: 3, title: 'Review & Pay', subtitle: step > 3 ? 'Completed' : 'Confirm & pay' }
-  ];
-
-  return (
-    <div className="min-h-screen bg-[var(--color-bg-base)] font-sans flex flex-col">
+  const WIZARD_STEPS = [{
+    id: 1,
+    title: 'Select Slot',
+    subtitle: bookingData.timeSlot ? 'Completed' : 'Choose date & time'
+  }, {
+    id: 2,
+    title: 'Patient Info & Auth',
+    subtitle: step > 2 ? 'Completed' : 'Enter details & verify'
+  }, {
+    id: 3,
+    title: 'Review & Pay',
+    subtitle: step > 3 ? 'Completed' : 'Confirm & pay'
+  }];
+  return <div className="min-h-screen bg-[var(--color-bg-base)] font-sans flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-40 backdrop-blur-md bg-[var(--color-surface)]/80 border-b border-[var(--color-border)] shadow-sm px-8 py-4 flex items-center gap-4">
-        <button
-          onClick={() => navigate(-1)}
-          className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors"
-        >
+        <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
           <FaArrowLeft />
         </button>
-        {tenant?.logoUrl && (
-          <div className="h-10 flex items-center justify-center">
+        {tenant?.logoUrl && <div className="h-10 flex items-center justify-center">
             <img src={tenant.logoUrl} alt="Logo" className="h-full w-auto object-contain" />
-          </div>
-        )}
+          </div>}
         <h1 className="text-xl  tracking-tight text-[var(--color-text-main)]">
           {tenant?.name}
         </h1>
@@ -133,79 +118,67 @@ export const BookingWizardPage: React.FC = () => {
         <div className="flex flex-col md:flex-row w-full bg-white rounded shadow-sm border border-gray-100 overflow-hidden min-h-[600px]">
 
           {/* Left Sidebar: Wizard Steps */}
-          {!isSuccess && (
-            <div className="w-full md:w-[280px] border-r border-gray-100 bg-white p-4 shrink-0 flex flex-col gap-4 z-10">
+          {!isSuccess && <div className="w-full md:w-[280px] border-r border-gray-100 bg-white p-4 shrink-0 flex flex-col gap-4 z-10">
               <h3 className="text-xl  text-gray-800 mb-4 mt-2">Setup Appointment</h3>
               <div className="flex flex-col gap-6 relative">
                 {/* Vertical connecting line */}
                 <div className="absolute left-[15px] top-4 bottom-4 w-px bg-gray-100 -z-10" />
 
-                {WIZARD_STEPS.map((s) => {
-                  const isCompleted = step > s.id;
-                  const isActive = step === s.id;
-
-                  return (
-                    <div key={s.id} className="flex items-start gap-4">
+                {WIZARD_STEPS.map(s => {
+              const isCompleted = step > s.id;
+              const isActive = step === s.id;
+              return <div key={s.id} className="flex items-start gap-4">
                       {/* Circle Indicator */}
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm transition-colors border`}
-                        style={{
-                          backgroundColor: isActive ? 'var(--color-primary)' : isCompleted ? '#ffffff' : '#ffffff',
-                          borderColor: (isActive || isCompleted) ? 'var(--color-primary)' : '#4b5563',
-                          color: isCompleted ? 'var(--color-primary)' : isActive ? '#ffffff' : '#1f2937',
-                          borderWidth: isCompleted ? '2px' : '1px'
-                        }}
-                      >
-                        {isCompleted ? (
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
-                        ) : (
-                          <span className="text-[13px] font-semibold">{s.id}</span>
-                        )}
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm transition-colors border`} style={{
+                  backgroundColor: isActive ? 'var(--color-primary)' : isCompleted ? '#ffffff' : '#ffffff',
+                  borderColor: isActive || isCompleted ? 'var(--color-primary)' : '#4b5563',
+                  color: isCompleted ? 'var(--color-primary)' : isActive ? '#ffffff' : '#1f2937',
+                  borderWidth: isCompleted ? '2px' : '1px'
+                }}>
+                        {isCompleted ? <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg> : <span className="text-[13px] font-semibold">{s.id}</span>}
                       </div>
 
                       {/* Text */}
                       <div className="flex flex-col">
-                        <span
-                          className="text-[15px] font-semibold"
-                          style={{ color: isActive ? 'var(--color-primary)' : '#374151' }}
-                        >
+                        <span className="text-[15px] font-semibold" style={{
+                    color: isActive ? 'var(--color-primary)' : '#374151'
+                  }}>
                           {s.title}
                         </span>
-                        <span
-                          className="text-[11px]  mt-0.5"
-                          style={{ color: isCompleted ? 'var(--color-primary)' : '#9ca3af' }}
-                        >
+                        <span className="text-[11px]  mt-0.5" style={{
+                    color: isCompleted ? 'var(--color-primary)' : '#9ca3af'
+                  }}>
                           {s.subtitle}
                         </span>
                       </div>
-                    </div>
-                  )
-                })}
+                    </div>;
+            })}
               </div>
-            </div>
-          )}
+            </div>}
 
           {/* Wizard Content */}
           <div className="flex-1 bg-gray-50/30 flex flex-col p-4 overflow-y-auto">
             <AnimatePresence mode="wait">
-              {!isSuccess ? (
-                <motion.div
-                  key={step}
-                  initial={{ x: 20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -20, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="h-full flex flex-col"
-                >
+              {!isSuccess ? <motion.div key={step} initial={{
+              x: 20,
+              opacity: 0
+            }} animate={{
+              x: 0,
+              opacity: 1
+            }} exit={{
+              x: -20,
+              opacity: 0
+            }} transition={{
+              duration: 0.2
+            }} className="h-full flex flex-col">
                   {renderStep()}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="success"
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="flex flex-col items-center justify-center text-center h-full pt-12 pb-12 w-full"
-                >
+                </motion.div> : <motion.div key="success" initial={{
+              scale: 0.9,
+              opacity: 0
+            }} animate={{
+              scale: 1,
+              opacity: 1
+            }} className="flex flex-col items-center justify-center text-center h-full pt-12 pb-12 w-full">
                   <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
                     <FaCheckCircle className="text-green-500 text-6xl" />
                   </div>
@@ -213,19 +186,15 @@ export const BookingWizardPage: React.FC = () => {
                   <p className="text-gray-500 max-w-md mb-8">
                     Your appointment with <span className="font-semibold text-gray-800">{bookingData.doctor?.name}</span> on <span className="font-semibold text-gray-800">{bookingData.date}</span> at <span className="font-semibold text-gray-800">{bookingData.timeSlot}</span> has been confirmed. We have sent the details to {bookingData.mobile}.
                   </p>
-                  <button
-                    onClick={handleClose}
-                    className="px-8 py-3 rounded text-white  hover:opacity-90 transition-opacity text-lg"
-                    style={{ backgroundColor: 'var(--color-primary)' }}
-                  >
+                  <button onClick={handleClose} className="px-8 py-3 rounded text-white  hover:opacity-90 transition-opacity text-lg" style={{
+                backgroundColor: 'var(--color-primary)'
+              }}>
                     Return to Portal
                   </button>
-                </motion.div>
-              )}
+                </motion.div>}
             </AnimatePresence>
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 };
