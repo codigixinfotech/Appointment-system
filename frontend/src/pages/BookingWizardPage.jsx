@@ -61,7 +61,7 @@ export const BookingWizardPage = () => {
     }));
   };
   const handleClose = () => {
-    navigate('/');
+    navigate(`/${tenant?.slug || ''}`);
   };
   const renderStep = () => {
     switch (step) {
